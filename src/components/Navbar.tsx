@@ -1,21 +1,41 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   Bot, 
   LineChart, 
   BookOpen, 
   Sparkles, 
-  ShieldCheck 
+  ShieldCheck,
+  LogIn,
+  LogOut,
+  UserCheck,
+  ChevronDown
 } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
 
 interface NavbarProps {
   currentTab: 'interview' | 'dashboard' | 'history' | 'setup';
   setCurrentTab: (tab: 'interview' | 'dashboard' | 'history' | 'setup') => void;
-  mockUser: { name: string; role: string };
+  mockUser?: { name: string; role: string };
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, mockUser }) => {
+export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => {
+  const router = useRouter();
+  const { user, logout } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const displayName = user?.name || 'Alex Hunter';
+  const displayRole = user?.targetRole || 'Data & AI Engineer';
+
+  const handleLogout = () => {
+    logout();
+    setMenuOpen(false);
+    router.push('/login');
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full bg-[#050917]/80 backdrop-blur-2xl border-b border-sky-500/15">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
@@ -85,21 +105,79 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab, mockU
           </button>
         </nav>
 
-        {/* User Profile / Candidate Chip */}
+        {/* User Profile / Candidate Chip & Auth Actions */}
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex flex-col text-right">
-            <span className="text-xs font-bold text-slate-200">{mockUser.name}</span>
-            <span className="text-[10px] text-sky-400 font-semibold flex items-center gap-1 justify-end">
-              <ShieldCheck className="w-3 h-3 text-cyan-400" /> {mockUser.role}
-            </span>
-          </div>
+          {user ? (
+            <div className="relative">
+              <button 
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="flex items-center gap-3 p-1.5 rounded-2xl hover:bg-slate-800/40 border border-transparent hover:border-slate-800 transition"
+              >
+                <div className="hidden sm:flex flex-col text-right">
+                  <span className="text-xs font-bold text-slate-200">{displayName}</span>
+                  <span className="text-[10px] text-sky-400 font-semibold flex items-center gap-1 justify-end">
+                    <ShieldCheck className="w-3 h-3 text-cyan-400" /> {displayRole}
+                  </span>
+                </div>
 
-          <div className="relative group cursor-pointer">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-sky-600 to-indigo-600 flex items-center justify-center font-black text-white text-xs border border-cyan-300/40 shadow-md group-hover:scale-105 transition-transform">
-              {mockUser.name.split(' ').map(n => n[0]).join('')}
+                <div className="relative">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-sky-600 to-indigo-600 flex items-center justify-center font-black text-white text-xs border border-cyan-300/40 shadow-md">
+                    {displayName.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                  </div>
+                  <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#050917]" />
+                </div>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
+              </button>
+
+              {/* Profile Dropdown Menu */}
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#0a1224] border border-sky-500/25 shadow-2xl p-2 z-50 backdrop-blur-xl">
+                  <div className="px-3 py-2 border-b border-slate-800">
+                    <p className="text-xs font-bold text-white">{displayName}</p>
+                    <p className="text-[11px] text-slate-400 truncate">{user.email}</p>
+                  </div>
+
+                  <div className="py-1">
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setMenuOpen(false)}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/60 transition"
+                    >
+                      <LineChart className="w-4 h-4 text-sky-400" />
+                      Dedicated Dashboard
+                    </Link>
+
+                    <Link
+                      href="/login"
+                      onClick={() => setMenuOpen(false)}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/60 transition"
+                    >
+                      <UserCheck className="w-4 h-4 text-cyan-400" />
+                      Switch Account
+                    </Link>
+                  </div>
+
+                  <div className="pt-1 border-t border-slate-800">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 transition"
+                    >
+                      <LogOut className="w-4 h-4 text-rose-400" />
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#050917]" />
-          </div>
+          ) : (
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-sky-600 text-white font-bold text-xs shadow-md shadow-sky-500/20 hover:scale-[1.02] transition"
+            >
+              <LogIn className="w-4 h-4" />
+              Sign In
+            </Link>
+          )}
         </div>
       </div>
     </header>
