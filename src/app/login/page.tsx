@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { 
@@ -11,12 +10,10 @@ import {
   Mail, 
   Lock, 
   User, 
-  CheckCircle2, 
   ShieldCheck, 
   Zap, 
   TrendingUp, 
-  Mic2,
-  ChevronLeft
+  Mic2
 } from 'lucide-react';
 
 export default function LoginPage() {
