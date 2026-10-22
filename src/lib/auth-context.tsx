@@ -21,15 +21,6 @@ interface AuthContextType {
   updateProfile: (updates: Partial<UserProfile>) => void;
 }
 
-const DEFAULT_USER: UserProfile = {
-  id: 'usr-1',
-  name: 'Alex Hunter',
-  email: 'alex.hunter@example.com',
-  targetRole: 'Data & AI Engineer',
-  streakDays: 5,
-  isGuest: false
-};
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -42,12 +33,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (stored) {
         setUser(JSON.parse(stored));
       } else {
-        // Provide default user for immediate preview
-        setUser(DEFAULT_USER);
-        localStorage.setItem('prepai_user_session', JSON.stringify(DEFAULT_USER));
+        setUser(null);
       }
     } catch {
-      setUser(DEFAULT_USER);
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       id: `usr-${Date.now()}`,
       name: displayName,
       email,
-      targetRole: 'Fullstack & AI Engineer',
+      targetRole: 'Data & AI Engineer',
       streakDays: 1,
       isGuest: false
     };

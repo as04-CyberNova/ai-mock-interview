@@ -8,6 +8,7 @@ import { Dashboard } from '@/components/Dashboard';
 import { SessionHistory } from '@/components/SessionHistory';
 import { RoleType, ExperienceLevel, InterviewSession, UserStats, SimulationMode } from '@/types/interview';
 import { QUESTION_BANK } from '@/data/questions';
+import { AuthGuard } from '@/components/AuthGuard';
 
 export default function Home() {
   const [currentTab, setCurrentTab] = useState<'interview' | 'dashboard' | 'history' | 'setup'>('setup');
@@ -132,62 +133,64 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070d19] text-slate-100 flex flex-col selection:bg-sky-500 selection:text-white">
-      {/* Top Navigation */}
-      <Navbar
-        currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
-        mockUser={{ name: 'Alex Hunter', role: 'Aspiring Data & AI Engineer' }}
-      />
+    <AuthGuard>
+      <div className="min-h-screen bg-[#070d19] text-slate-100 flex flex-col selection:bg-sky-500 selection:text-white">
+        {/* Top Navigation */}
+        <Navbar
+          currentTab={currentTab}
+          setCurrentTab={setCurrentTab}
+          mockUser={{ name: 'Alex Hunter', role: 'Aspiring Data & AI Engineer' }}
+        />
 
-      {/* Main App Body */}
-      <main className="flex-1 pb-16">
-        {currentTab === 'setup' && (
-          <InterviewSetup
-            selectedRole={selectedRole}
-            setSelectedRole={setSelectedRole}
-            selectedLevel={selectedLevel}
-            setSelectedLevel={setSelectedLevel}
-            selectedMode={selectedMode}
-            setSelectedMode={setSelectedMode}
-            onStart={handleStartSession}
-          />
-        )}
+        {/* Main App Body */}
+        <main className="flex-1 pb-16">
+          {currentTab === 'setup' && (
+            <InterviewSetup
+              selectedRole={selectedRole}
+              setSelectedRole={setSelectedRole}
+              selectedLevel={selectedLevel}
+              setSelectedLevel={setSelectedLevel}
+              selectedMode={selectedMode}
+              setSelectedMode={setSelectedMode}
+              onStart={handleStartSession}
+            />
+          )}
 
-        {currentTab === 'interview' && (
-          <InterviewStudio
-            questions={activeQuestions.length > 0 ? activeQuestions : QUESTION_BANK.slice(0, 3)}
-            role={selectedRole}
-            level={selectedLevel}
-            mode={selectedMode}
-            onComplete={handleSessionComplete}
-            onExit={() => setCurrentTab('setup')}
-          />
-        )}
+          {currentTab === 'interview' && (
+            <InterviewStudio
+              questions={activeQuestions.length > 0 ? activeQuestions : QUESTION_BANK.slice(0, 3)}
+              role={selectedRole}
+              level={selectedLevel}
+              mode={selectedMode}
+              onComplete={handleSessionComplete}
+              onExit={() => setCurrentTab('setup')}
+            />
+          )}
 
-        {currentTab === 'dashboard' && (
-          <Dashboard
-            stats={stats}
-            recentSessions={sessions}
-            onStartNew={() => setCurrentTab('setup')}
-          />
-        )}
+          {currentTab === 'dashboard' && (
+            <Dashboard
+              stats={stats}
+              recentSessions={sessions}
+              onStartNew={() => setCurrentTab('setup')}
+            />
+          )}
 
-        {currentTab === 'history' && (
-          <SessionHistory sessions={sessions} />
-        )}
-      </main>
+          {currentTab === 'history' && (
+            <SessionHistory sessions={sessions} />
+          )}
+        </main>
 
-      {/* Modern Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950/80 py-8 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 PrepAI Studio. Built with Next.js, Tailwind CSS, Supabase & AI Evaluation Engine.</p>
-          <div className="flex items-center gap-6">
-            <span className="text-slate-400">Electric Blue & Dark Navy Edition</span>
-            <span className="text-sky-400 font-semibold">Ready for Deployment</span>
+        {/* Modern Footer */}
+        <footer className="border-t border-slate-900 bg-slate-950/80 py-8 text-center text-xs text-slate-500">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>© 2026 PrepAI Studio. Built with Next.js, Tailwind CSS, Supabase & AI Evaluation Engine.</p>
+            <div className="flex items-center gap-6">
+              <span className="text-slate-400">Electric Blue & Dark Navy Edition</span>
+              <span className="text-sky-400 font-semibold">Ready for Deployment</span>
+            </div>
           </div>
-        </div>
-      </footer>
-    </div>
+        </footer>
+      </div>
+    </AuthGuard>
   );
 }
