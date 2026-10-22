@@ -27,8 +27,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const displayName = user?.name || 'Alex Hunter';
-  const displayRole = user?.targetRole || 'Data & AI Engineer';
+  const displayName = user?.name || (user?.email ? user.email.split('@')[0] : 'Candidate');
+  const displayRole = user?.targetRole || 'Interview Preparation';
 
   const handleLogout = () => {
     logout();

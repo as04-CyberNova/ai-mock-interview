@@ -27,6 +27,7 @@ import {
   Sparkles,
   BarChart2
 } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
 
 interface DashboardProps {
   stats: UserStats;
@@ -35,6 +36,17 @@ interface DashboardProps {
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onStartNew }) => {
+  const { user } = useAuth();
+  const streak = user?.streakDays || (recentSessions.length > 0 ? 1 : 0);
+  const hasSessions = recentSessions.length > 0;
+
+  // Format practicing hours
+  const timePracticedFormatted = stats.hoursPracticed >= 1 
+    ? `${stats.hoursPracticed}h` 
+    : stats.hoursPracticed > 0 
+      ? `${Math.round(stats.hoursPracticed * 60)}m` 
+      : '0m';
+
   return (
     <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8 space-y-8">
       {/* Top Banner / Candidate Performance Overview */}
@@ -44,8 +56,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
 
         <div className="relative z-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/70 text-cyan-300 text-xs font-bold mb-3.5 border border-cyan-400/40 shadow-sm">
-            <Flame className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-            <span>5-Day Practice Streak • Elite Tier</span>
+            <Flame className={`w-3.5 h-3.5 ${streak > 0 ? 'text-amber-400 fill-amber-400' : 'text-slate-500'}`} />
+            <span>
+              {streak > 0 ? `${streak}-Day Practice Streak` : 'Start Your Practice Streak'}
+              {hasSessions ? ' • Active Candidate' : ' • Getting Started'}
+            </span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
@@ -78,13 +93,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-black text-white">{stats.readinessScore}%</span>
-            <span className="text-xs text-emerald-400 font-bold flex items-center bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-              <TrendingUp className="w-3 h-3 mr-1" /> +8.4%
-            </span>
+            {hasSessions && stats.readinessScore > 0 && (
+              <span className="text-xs text-emerald-400 font-bold flex items-center bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                <TrendingUp className="w-3 h-3 mr-1" /> Active
+              </span>
+            )}
           </div>
           <div className="h-2 w-full bg-slate-900 rounded-full mt-4 overflow-hidden border border-slate-800">
             <div 
-              className="h-full bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-500 rounded-full" 
+              className="h-full bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-500 rounded-full transition-all duration-500" 
               style={{ width: `${stats.readinessScore}%` }} 
             />
           </div>
@@ -102,7 +119,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
             <span className="text-xs text-slate-400 font-mono">/ 100</span>
           </div>
           <p className="text-[11px] text-slate-400 mt-4 flex items-center gap-1.5">
-            <Sparkles className="w-3 h-3 text-cyan-400" /> Top 15% across all simulated tracks
+            <Sparkles className="w-3 h-3 text-cyan-400" /> 
+            {hasSessions ? 'Calculated from completed sessions' : 'Complete an interview to see rating'}
           </p>
         </div>
 
@@ -117,7 +135,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
             <span className="text-3xl font-black text-white">{stats.totalInterviews}</span>
             <span className="text-xs text-slate-400">completed</span>
           </div>
-          <p className="text-[11px] text-slate-400 mt-4">Data Analyst • SQL • Python • HR</p>
+          <p className="text-[11px] text-slate-400 mt-4 truncate">
+            {stats.roleBreakdown.length > 0 
+              ? stats.roleBreakdown.map((r) => r.role.replace('-', ' ')).join(' • ')
+              : 'No rounds recorded yet'}
+          </p>
         </div>
 
         <div className="glass-panel rounded-3xl p-6 border border-cyan-500/20 group hover:border-cyan-400/50 transition-all duration-300">
@@ -128,10 +150,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
             </div>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-black text-white">{stats.hoursPracticed}</span>
-            <span className="text-xs text-slate-400">hours</span>
+            <span className="text-3xl font-black text-white">{timePracticedFormatted}</span>
           </div>
-          <p className="text-[11px] text-slate-400 mt-4">Speech dictation &amp; STAR sessions</p>
+          <p className="text-[11px] text-slate-400 mt-4">Active interview time</p>
         </div>
       </div>
 
@@ -147,42 +168,50 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">Performance trajectory across past simulated interview rounds</p>
             </div>
-            <span className="text-xs text-cyan-300 font-bold px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 font-mono">
-              RECENT SESSIONS
-            </span>
+            {hasSessions && (
+              <span className="text-xs text-cyan-300 font-bold px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 font-mono">
+                {stats.recentActivity.length} RECENT SESSIONS
+              </span>
+            )}
           </div>
 
-          <div className="h-68 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={stats.recentActivity}>
-                <defs>
-                  <linearGradient id="scoreGlow" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.45}/>
-                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="date" stroke="#475569" fontSize={11} tickLine={false} />
-                <YAxis stroke="#475569" fontSize={11} domain={[50, 100]} tickLine={false} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#050a18', 
-                    borderColor: '#06b6d4', 
-                    borderRadius: '12px', 
-                    color: '#fff',
-                    fontSize: '12px',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.6)'
-                  }} 
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="score" 
-                  stroke="#06b6d4" 
-                  strokeWidth={3} 
-                  fillOpacity={1} 
-                  fill="url(#scoreGlow)" 
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+          <div className="h-68 w-full flex items-center justify-center">
+            {stats.recentActivity.length === 0 ? (
+              <div className="text-center py-12 text-slate-500 text-xs">
+                No score trajectory yet. Complete your first mock interview round to plot progression!
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={stats.recentActivity}>
+                  <defs>
+                    <linearGradient id="scoreGlow" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.45}/>
+                      <stop offset="95%" stopColor="#06b6d4" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="date" stroke="#475569" fontSize={11} tickLine={false} />
+                  <YAxis stroke="#475569" fontSize={11} domain={[0, 100]} tickLine={false} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#050a18', 
+                      borderColor: '#06b6d4', 
+                      borderRadius: '12px', 
+                      color: '#fff',
+                      fontSize: '12px',
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.6)'
+                    }} 
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="score" 
+                    stroke="#06b6d4" 
+                    strokeWidth={3} 
+                    fillOpacity={1} 
+                    fill="url(#scoreGlow)" 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 
@@ -194,20 +223,26 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
           </div>
 
           <div className="h-68 w-full flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart outerRadius={78} data={stats.skillScores}>
-                <PolarGrid stroke="#1e293b" />
-                <PolarAngleAxis dataKey="skill" stroke="#94a3b8" fontSize={10} fontStyle="bold" />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#334155" fontSize={9} />
-                <Radar 
-                  name="Score" 
-                  dataKey="score" 
-                  stroke="#38bdf8" 
-                  fill="#0284c7" 
-                  fillOpacity={0.45} 
-                />
-              </RadarChart>
-            </ResponsiveContainer>
+            {stats.skillScores.length === 0 || !hasSessions ? (
+              <div className="text-center py-12 text-slate-500 text-xs">
+                Complete an interview to generate your competency radar.
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart outerRadius={78} data={stats.skillScores}>
+                  <PolarGrid stroke="#1e293b" />
+                  <PolarAngleAxis dataKey="skill" stroke="#94a3b8" fontSize={10} fontStyle="bold" />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#334155" fontSize={9} />
+                  <Radar 
+                    name="Score" 
+                    dataKey="score" 
+                    stroke="#38bdf8" 
+                    fill="#0284c7" 
+                    fillOpacity={0.45} 
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
       </div>
@@ -220,23 +255,29 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
           <p className="text-xs text-slate-400 mb-6">Average score distribution per job role specialization</p>
 
           <div className="space-y-4">
-            {stats.roleBreakdown.map((item) => (
-              <div key={item.role} className="space-y-1.5">
-                <div className="flex justify-between text-xs font-bold">
-                  <span className="text-slate-200 capitalize">{item.role.replace('-', ' ')}</span>
-                  <span className="text-cyan-400 font-mono">{item.avgScore}%</span>
-                </div>
-                <div className="h-2.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
-                  <div 
-                    className="h-full bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-500 rounded-full transition-all duration-700 shadow-sm shadow-cyan-400/30"
-                    style={{ width: `${item.avgScore}%` }}
-                  />
-                </div>
-                <div className="text-[10px] text-slate-500 flex justify-between font-medium">
-                  <span>{item.count} sessions completed</span>
-                </div>
+            {stats.roleBreakdown.length === 0 ? (
+              <div className="py-8 text-center text-slate-500 text-xs">
+                No track data yet. Sessions you complete will appear here.
               </div>
-            ))}
+            ) : (
+              stats.roleBreakdown.map((item) => (
+                <div key={item.role} className="space-y-1.5">
+                  <div className="flex justify-between text-xs font-bold">
+                    <span className="text-slate-200 capitalize">{item.role.replace('-', ' ')}</span>
+                    <span className="text-cyan-400 font-mono">{item.avgScore}%</span>
+                  </div>
+                  <div className="h-2.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                    <div 
+                      className="h-full bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-500 rounded-full transition-all duration-700 shadow-sm shadow-cyan-400/30"
+                      style={{ width: `${item.avgScore}%` }}
+                    />
+                  </div>
+                  <div className="text-[10px] text-slate-500 flex justify-between font-medium">
+                    <span>{item.count} session{item.count > 1 ? 's' : ''} completed</span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -273,7 +314,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
                   <div className="flex items-center gap-3">
                     <div className="text-right">
                       <span className="text-lg font-black text-white">
-                        {session.overallScore || 80}%
+                        {session.overallScore || 0}%
                       </span>
                       <span className="block text-[10px] text-emerald-400 font-bold uppercase tracking-wide">COMPLETED</span>
                     </div>
