@@ -28,18 +28,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('prepai_user_session');
-      if (stored) {
-        setUser(JSON.parse(stored));
-      } else {
+    const syncUser = () => {
+      try {
+        const stored = typeof window !== 'undefined' ? localStorage.getItem('prepai_user_session') : null;
+        if (stored) {
+          setUser(JSON.parse(stored));
+        }
+      } catch {
         setUser(null);
+      } finally {
+        setIsLoading(false);
       }
-    } catch {
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
+    };
+
+    // Queue in microtask/frame to decouple from synchronous effect execution
+    const timer = setTimeout(syncUser, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const login = async (email: string, name?: string) => {
