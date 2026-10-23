@@ -34,7 +34,7 @@ export default function Home() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-[#070d19] text-slate-100 flex flex-col selection:bg-sky-500 selection:text-white">
+      <div className="min-h-screen bg-black text-neutral-100 flex flex-col selection:bg-white selection:text-black">
         {/* Top Navigation */}
         <Navbar
           currentTab={currentTab}
@@ -79,13 +79,13 @@ export default function Home() {
           )}
         </main>
 
-        {/* Modern Footer */}
-        <footer className="border-t border-slate-900 bg-slate-950/80 py-8 text-center text-xs text-slate-500">
+        {/* Monochrome Footer */}
+        <footer className="border-t border-neutral-900 bg-black py-8 text-center text-xs text-neutral-500">
           <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>© 2026 PrepAI Studio. Built with Next.js, Tailwind CSS, Supabase &amp; AI Evaluation Engine.</p>
+            <p>© 2026 PrepAI Studio. Built with Next.js, Tailwind CSS &amp; AI Evaluation Engine.</p>
             <div className="flex items-center gap-6">
-              <span className="text-slate-400">Electric Blue &amp; Dark Navy Edition</span>
-              <span className="text-sky-400 font-semibold">Ready for Deployment</span>
+              <span className="text-neutral-400">Monochrome Black &amp; White Edition</span>
+              <span className="text-white font-semibold">Active Session</span>
             </div>
           </div>
         </footer>

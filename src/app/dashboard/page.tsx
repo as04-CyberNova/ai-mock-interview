@@ -21,7 +21,7 @@ export default function DashboardRoutePage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-[#070d19] text-slate-100 flex flex-col selection:bg-sky-500 selection:text-white">
+      <div className="min-h-screen bg-black text-neutral-100 flex flex-col selection:bg-white selection:text-black">
         <Navbar
           currentTab={currentTab}
           setCurrentTab={(tab) => {
@@ -41,14 +41,14 @@ export default function DashboardRoutePage() {
           />
         </main>
 
-        <footer className="border-t border-slate-900 bg-slate-950/80 py-8 text-center text-xs text-slate-500">
+        <footer className="border-t border-neutral-900 bg-black py-8 text-center text-xs text-neutral-500">
           <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p>© 2026 PrepAI Studio. Performance &amp; Skill Metrics Engine.</p>
             <div className="flex items-center gap-6">
-              <Link href="/login" className="text-slate-400 hover:text-sky-300 transition">
+              <Link href="/login" className="text-neutral-400 hover:text-white transition">
                 Candidate Account
               </Link>
-              <span className="text-sky-400 font-semibold">Active Session</span>
+              <span className="text-white font-semibold">Active Session</span>
             </div>
           </div>
         </footer>
