@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { InterviewSetup } from '@/components/InterviewSetup';
 import { InterviewStudio } from '@/components/InterviewStudio';
@@ -9,19 +9,14 @@ import { SessionHistory } from '@/components/SessionHistory';
 import { RoleType, ExperienceLevel, InterviewSession, SimulationMode } from '@/types/interview';
 import { QUESTION_BANK } from '@/data/questions';
 import { AuthGuard } from '@/components/AuthGuard';
-import { getStoredSessions, saveSessionToStorage, computeUserStats } from '@/lib/session-storage';
+import { saveSessionToStorage, computeUserStats, useSessions } from '@/lib/session-storage';
 
 export default function Home() {
   const [currentTab, setCurrentTab] = useState<'interview' | 'dashboard' | 'history' | 'setup'>('setup');
   const [selectedRole, setSelectedRole] = useState<RoleType>('data-analyst');
   const [selectedLevel, setSelectedLevel] = useState<ExperienceLevel>('Mid Level');
   const [selectedMode, setSelectedMode] = useState<SimulationMode>('voice');
-  const [sessions, setSessions] = useState<InterviewSession[]>([]);
-
-  // Load real sessions from local storage on mount
-  useEffect(() => {
-    setSessions(getStoredSessions());
-  }, []);
+  const sessions = useSessions();
 
   // Compute live user stats from real sessions
   const stats = computeUserStats(sessions);
@@ -33,8 +28,7 @@ export default function Home() {
   };
 
   const handleSessionComplete = (newSession: InterviewSession) => {
-    const updated = saveSessionToStorage(newSession);
-    setSessions(updated);
+    saveSessionToStorage(newSession);
     setCurrentTab('dashboard');
   };
 

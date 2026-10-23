@@ -1,22 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Dashboard } from '@/components/Dashboard';
 import { Navbar } from '@/components/Navbar';
-import { InterviewSession } from '@/types/interview';
 import { AuthGuard } from '@/components/AuthGuard';
-import { getStoredSessions, computeUserStats } from '@/lib/session-storage';
+import { computeUserStats, useSessions } from '@/lib/session-storage';
 
 export default function DashboardRoutePage() {
   const router = useRouter();
   const [currentTab, setCurrentTab] = useState<'interview' | 'dashboard' | 'history' | 'setup'>('dashboard');
-  const [sessions, setSessions] = useState<InterviewSession[]>([]);
-
-  useEffect(() => {
-    setSessions(getStoredSessions());
-  }, []);
+  const sessions = useSessions();
 
   const stats = computeUserStats(sessions);
 

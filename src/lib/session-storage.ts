@@ -1,16 +1,52 @@
+import React from 'react';
 import { InterviewSession, UserStats, RoleType } from '@/types/interview';
 
 const STORAGE_KEY = 'prepai_interview_sessions';
+const listeners = new Set<() => void>();
+
+function emitChange() {
+  for (const listener of listeners) {
+    listener();
+  }
+}
+
+function subscribeSessions(listener: () => void) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+let cachedSessions: InterviewSession[] | null = null;
+let cachedRaw: string | null = null;
 
 export function getStoredSessions(): InterviewSession[] {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (raw === cachedRaw && cachedSessions !== null) {
+      return cachedSessions;
+    }
+    cachedRaw = raw;
+    cachedSessions = raw ? JSON.parse(raw) : [];
+    return cachedSessions as InterviewSession[];
   } catch (err) {
     console.error('Failed to read sessions from localStorage', err);
     return [];
   }
+}
+
+const emptySessions: InterviewSession[] = [];
+function getServerSnapshot(): InterviewSession[] {
+  return emptySessions;
+}
+
+export function useSessions() {
+  return React.useSyncExternalStore(
+    subscribeSessions,
+    getStoredSessions,
+    getServerSnapshot
+  );
 }
 
 export function saveSessionToStorage(session: InterviewSession): InterviewSession[] {
@@ -19,6 +55,9 @@ export function saveSessionToStorage(session: InterviewSession): InterviewSessio
     const existing = getStoredSessions();
     const updated = [session, ...existing.filter((s) => s.id !== session.id)];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    cachedRaw = JSON.stringify(updated);
+    cachedSessions = updated;
+    emitChange();
     return updated;
   } catch (err) {
     console.error('Failed to save session to localStorage', err);
