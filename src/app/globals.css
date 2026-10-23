@@ -3,106 +3,172 @@
 :root {
   --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: var(--font-mono), monospace;
+
+  /* Premium Neon Palette */
+  --neon-cyan: #00f7ff;
+  --neon-cyan-glow: rgba(0, 247, 255, 0.45);
+  --neon-lime: #10ff9e;
+  --neon-lime-glow: rgba(16, 255, 158, 0.45);
+  --neon-magenta: #ff007f;
+  --neon-magenta-glow: rgba(255, 0, 127, 0.45);
+  --neon-purple: #9d00ff;
+  --neon-purple-glow: rgba(157, 0, 255, 0.45);
+  --neon-amber: #ffaa00;
+  --neon-amber-glow: rgba(255, 170, 0, 0.45);
 }
 
 body {
-  background-color: #040814;
+  background-color: #030712;
   color: #f8fafc;
   overflow-x: hidden;
   background-image: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(14, 165, 233, 0.15), transparent),
-    radial-gradient(circle 600px at 90% 20%, rgba(99, 102, 241, 0.08), transparent),
-    radial-gradient(circle 600px at 10% 80%, rgba(56, 189, 248, 0.06), transparent);
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 247, 255, 0.16), transparent),
+    radial-gradient(circle 700px at 92% 18%, rgba(157, 0, 255, 0.14), transparent),
+    radial-gradient(circle 600px at 8% 82%, rgba(16, 255, 158, 0.10), transparent);
 }
 
-/* Futuristic background grid mesh */
+/* Futuristic background grid mesh with subtle neon wireframe */
 .bg-grid-pattern {
-  background-size: 40px 40px;
+  background-size: 36px 36px;
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(to right, rgba(0, 247, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 247, 255, 0.05) 1px, transparent 1px);
 }
 
 .bg-radial-vignette {
-  background: radial-gradient(circle at 50% 50%, rgba(10, 25, 55, 0.6) 0%, rgba(4, 8, 20, 0.95) 100%);
+  background: radial-gradient(circle at 50% 50%, rgba(10, 25, 55, 0.6) 0%, rgba(3, 7, 18, 0.96) 100%);
 }
 
-/* Next-Gen Glassmorphism */
+/* Next-Gen Neon Glassmorphism */
 .glass-panel {
-  background: rgba(10, 18, 38, 0.65);
+  background: rgba(8, 14, 30, 0.72);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(0, 247, 255, 0.16);
   box-shadow: 
-    0 10px 40px -10px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    0 10px 40px -10px rgba(0, 0, 0, 0.6),
+    0 0 20px -8px rgba(0, 247, 255, 0.12),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
 }
 
 .glass-panel-glow {
-  background: linear-gradient(135deg, rgba(14, 28, 60, 0.8) 0%, rgba(8, 16, 35, 0.9) 100%);
+  background: linear-gradient(135deg, rgba(10, 22, 50, 0.85) 0%, rgba(5, 12, 28, 0.95) 100%);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  border: 1px solid rgba(0, 247, 255, 0.4);
   box-shadow: 
-    0 0 35px -5px rgba(14, 165, 233, 0.22),
-    0 20px 40px -15px rgba(0, 0, 0, 0.7),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+    0 0 35px -5px rgba(0, 247, 255, 0.35),
+    0 0 15px -3px rgba(157, 0, 255, 0.25),
+    0 20px 45px -15px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
 }
 
 .glass-card-interactive {
-  background: rgba(11, 20, 42, 0.5);
+  background: rgba(10, 18, 38, 0.55);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card-interactive:hover {
-  background: rgba(15, 29, 63, 0.7);
-  border-color: rgba(56, 189, 248, 0.35);
+  background: rgba(13, 24, 52, 0.8);
+  border-color: rgba(0, 247, 255, 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px -10px rgba(14, 165, 233, 0.25);
+  box-shadow: 
+    0 12px 30px -10px rgba(0, 247, 255, 0.3),
+    0 0 20px -4px rgba(0, 247, 255, 0.25);
 }
 
-/* Gradient typography */
+/* Neon Gradient Typography */
 .gradient-text {
-  background: linear-gradient(135deg, #ffffff 15%, #38bdf8 65%, #818cf8 100%);
+  background: linear-gradient(135deg, #ffffff 15%, #00f7ff 65%, #9d00ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .gradient-text-electric {
-  background: linear-gradient(135deg, #38bdf8 0%, #00f2fe 45%, #818cf8 100%);
+  background: linear-gradient(135deg, #00f7ff 0%, #10ff9e 45%, #9d00ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 16px rgba(0, 247, 255, 0.4));
+}
+
+.gradient-text-magenta {
+  background: linear-gradient(135deg, #ff007f 0%, #9d00ff 50%, #00f7ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Neon buttons */
+/* Neon Glow Utilities */
+.neon-glow-cyan {
+  box-shadow: 0 0 20px -2px rgba(0, 247, 255, 0.5), inset 0 0 10px rgba(0, 247, 255, 0.2);
+}
+
+.neon-glow-lime {
+  box-shadow: 0 0 20px -2px rgba(16, 255, 158, 0.5), inset 0 0 10px rgba(16, 255, 158, 0.2);
+}
+
+.neon-glow-magenta {
+  box-shadow: 0 0 20px -2px rgba(255, 0, 127, 0.5), inset 0 0 10px rgba(255, 0, 127, 0.2);
+}
+
+.neon-glow-purple {
+  box-shadow: 0 0 20px -2px rgba(157, 0, 255, 0.5), inset 0 0 10px rgba(157, 0, 255, 0.2);
+}
+
+.neon-border-cyan {
+  border-color: #00f7ff;
+  box-shadow: 0 0 15px rgba(0, 247, 255, 0.35);
+}
+
+/* Electric & Neon Buttons */
 .btn-electric {
   position: relative;
-  background: linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #4338ca 100%);
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  box-shadow: 0 0 20px rgba(14, 165, 233, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 45%, #7209b7 100%);
+  border: 1px solid rgba(0, 247, 255, 0.55);
+  box-shadow: 
+    0 0 22px rgba(0, 247, 255, 0.45), 
+    0 0 40px -10px rgba(157, 0, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
   transition: all 0.25s ease;
 }
 
 .btn-electric:hover {
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #4f46e5 100%);
-  box-shadow: 0 0 30px rgba(14, 165, 233, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #00f7ff 0%, #0096c7 45%, #9d00ff 100%);
+  border-color: #00f7ff;
+  box-shadow: 
+    0 0 35px rgba(0, 247, 255, 0.7), 
+    0 0 50px -5px rgba(157, 0, 255, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  transform: translateY(-1.5px);
+}
+
+.btn-neon-magenta {
+  background: linear-gradient(135deg, #ff007f 0%, #b5179e 60%, #7209b7 100%);
+  border: 1px solid rgba(255, 0, 127, 0.5);
+  box-shadow: 0 0 24px rgba(255, 0, 127, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: all 0.25s ease;
+}
+
+.btn-neon-magenta:hover {
+  box-shadow: 0 0 38px rgba(255, 0, 127, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transform: translateY(-1.5px);
 }
 
 /* Glowing AI Orb */
 @keyframes orbPulse {
   0%, 100% {
     transform: scale(1);
-    opacity: 0.8;
+    opacity: 0.85;
+    filter: drop-shadow(0 0 25px rgba(0, 247, 255, 0.65));
   }
   50% {
     transform: scale(1.08);
     opacity: 1;
-    filter: drop-shadow(0 0 35px rgba(56, 189, 248, 0.8));
+    filter: drop-shadow(0 0 45px rgba(0, 247, 255, 0.95)) drop-shadow(0 0 25px rgba(157, 0, 255, 0.6));
   }
 }
 
@@ -111,9 +177,9 @@ body {
 }
 
 /* Real-time sound wave bars */
-@keyframes audioWave1 { 0%, 100% { height: 6px; } 50% { height: 28px; } }
-@keyframes audioWave2 { 0%, 100% { height: 14px; } 50% { height: 36px; } }
-@keyframes audioWave3 { 0%, 100% { height: 8px; } 50% { height: 24px; } }
+@keyframes audioWave1 { 0%, 100% { height: 6px; } 50% { height: 30px; } }
+@keyframes audioWave2 { 0%, 100% { height: 16px; } 50% { height: 40px; } }
+@keyframes audioWave3 { 0%, 100% { height: 8px; } 50% { height: 26px; } }
 
 .audio-bar-1 { animation: audioWave1 0.9s ease-in-out infinite; }
 .audio-bar-2 { animation: audioWave2 0.75s ease-in-out infinite 0.15s; }
@@ -125,12 +191,14 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #040814;
+  background: #030712;
 }
 ::-webkit-scrollbar-thumb {
   background: #1e293b;
   border-radius: 9999px;
+  border: 1px solid rgba(0, 247, 255, 0.15);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #0284c7;
+  background: #00f7ff;
+  box-shadow: 0 0 10px #00f7ff;
 }

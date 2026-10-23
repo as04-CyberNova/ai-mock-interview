@@ -67,40 +67,40 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
         </div>
 
         {/* Center Modern Segmented Navigation Bar */}
-        <nav className="hidden md:flex items-center p-1 rounded-2xl bg-[#0b1428]/80 border border-slate-800/80 shadow-inner">
+        <nav className="hidden md:flex items-center p-1 rounded-2xl bg-[#081226]/90 border border-cyan-500/20 shadow-inner">
           <button
             onClick={() => setCurrentTab('setup')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
               currentTab === 'setup'
-                ? 'bg-gradient-to-r from-sky-500/25 to-indigo-500/25 text-sky-300 border border-sky-400/40 shadow-sm'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                ? 'bg-gradient-to-r from-cyan-500/25 via-sky-500/20 to-purple-500/25 text-[#00f7ff] border border-cyan-400/60 shadow-[0_0_15px_rgba(0,247,255,0.3)]'
+                : 'text-slate-400 hover:text-cyan-200 hover:bg-slate-800/40'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+            <Sparkles className="w-3.5 h-3.5 text-[#00f7ff]" />
             Interview Studio
           </button>
 
           <button
             onClick={() => setCurrentTab('dashboard')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
               currentTab === 'dashboard'
-                ? 'bg-gradient-to-r from-sky-500/25 to-indigo-500/25 text-sky-300 border border-sky-400/40 shadow-sm'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                ? 'bg-gradient-to-r from-cyan-500/25 via-sky-500/20 to-purple-500/25 text-[#00f7ff] border border-cyan-400/60 shadow-[0_0_15px_rgba(0,247,255,0.3)]'
+                : 'text-slate-400 hover:text-cyan-200 hover:bg-slate-800/40'
             }`}
           >
-            <LineChart className="w-3.5 h-3.5 text-sky-400" />
+            <LineChart className="w-3.5 h-3.5 text-[#00f7ff]" />
             Analytics &amp; Skills
           </button>
 
           <button
             onClick={() => setCurrentTab('history')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
               currentTab === 'history'
-                ? 'bg-gradient-to-r from-sky-500/25 to-indigo-500/25 text-sky-300 border border-sky-400/40 shadow-sm'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                ? 'bg-gradient-to-r from-cyan-500/25 via-sky-500/20 to-purple-500/25 text-[#00f7ff] border border-cyan-400/60 shadow-[0_0_15px_rgba(0,247,255,0.3)]'
+                : 'text-slate-400 hover:text-cyan-200 hover:bg-slate-800/40'
             }`}
           >
-            <BookOpen className="w-3.5 h-3.5 text-sky-400" />
+            <BookOpen className="w-3.5 h-3.5 text-[#00f7ff]" />
             Past Transcripts
           </button>
         </nav>

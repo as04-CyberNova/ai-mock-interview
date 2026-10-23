@@ -122,13 +122,13 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="glass-panel-glow rounded-3xl p-8 border border-sky-500/25 bg-[#0a1224]/90 backdrop-blur-2xl shadow-2xl relative">
             {/* Header Tabs: Login vs Register */}
-            <div className="flex p-1 rounded-2xl bg-[#050915] border border-slate-800/80 mb-6">
+            <div className="flex p-1 rounded-2xl bg-[#040817] border border-cyan-500/25 mb-6 shadow-inner">
               <button
                 type="button"
                 onClick={() => setIsSignUp(false)}
-                className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+                className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                   !isSignUp 
-                    ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-md' 
+                    ? 'bg-gradient-to-r from-cyan-500/30 via-sky-500/20 to-purple-500/30 text-[#00f7ff] border border-cyan-400/60 shadow-[0_0_15px_rgba(0,247,255,0.3)]' 
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -137,9 +137,9 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setIsSignUp(true)}
-                className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+                className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                   isSignUp 
-                    ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-md' 
+                    ? 'bg-gradient-to-r from-cyan-500/30 via-sky-500/20 to-purple-500/30 text-[#00f7ff] border border-cyan-400/60 shadow-[0_0_15px_rgba(0,247,255,0.3)]' 
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -148,7 +148,8 @@ export default function LoginPage() {
             </div>
 
             <div className="mb-6">
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#00f7ff] shadow-[0_0_8px_#00f7ff]" />
                 {isSignUp ? 'Start Your Practice Journey' : 'Welcome Back'}
               </h2>
               <p className="text-xs text-slate-400 mt-1">
@@ -159,7 +160,7 @@ export default function LoginPage() {
             </div>
 
             {errorMessage && (
-              <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-medium">
+              <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-medium shadow-[0_0_12px_rgba(244,63,94,0.25)]">
                 {errorMessage}
               </div>
             )}
@@ -169,13 +170,13 @@ export default function LoginPage() {
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1.5">Full Name</label>
                   <div className="relative">
-                    <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                    <User className="w-4 h-4 text-[#00f7ff] absolute left-3.5 top-3" />
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Alex Hunter"
-                      className="w-full bg-[#060c1c] border border-slate-700/80 focus:border-cyan-400 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-cyan-400 transition"
+                      className="w-full bg-[#040816] border border-slate-700/80 focus:border-[#00f7ff] rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-[#00f7ff] transition shadow-inner"
                       required={isSignUp}
                     />
                   </div>
@@ -188,7 +189,7 @@ export default function LoginPage() {
                   <select
                     value={targetRole}
                     onChange={(e) => setTargetRole(e.target.value)}
-                    className="w-full bg-[#060c1c] border border-slate-700/80 focus:border-cyan-400 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-cyan-400 transition"
+                    className="w-full bg-[#040816] border border-slate-700/80 focus:border-[#00f7ff] rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#00f7ff] transition"
                   >
                     <option value="Data Analyst">Data Analyst</option>
                     <option value="SQL Specialist">SQL Specialist</option>
@@ -203,13 +204,13 @@ export default function LoginPage() {
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">Email Address</label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                  <Mail className="w-4 h-4 text-[#00f7ff] absolute left-3.5 top-3" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="candidate@example.com"
-                    className="w-full bg-[#060c1c] border border-slate-700/80 focus:border-cyan-400 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-cyan-400 transition"
+                    className="w-full bg-[#040816] border border-slate-700/80 focus:border-[#00f7ff] rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-[#00f7ff] transition shadow-inner"
                     required
                   />
                 </div>
@@ -218,13 +219,13 @@ export default function LoginPage() {
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5">Password</label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                  <Lock className="w-4 h-4 text-[#00f7ff] absolute left-3.5 top-3" />
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full bg-[#060c1c] border border-slate-700/80 focus:border-cyan-400 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-cyan-400 transition"
+                    className="w-full bg-[#040816] border border-slate-700/80 focus:border-[#00f7ff] rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-[#00f7ff] transition shadow-inner"
                     required
                   />
                 </div>
@@ -233,14 +234,14 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full mt-2 py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-sky-500 to-indigo-600 text-white font-bold text-xs shadow-lg shadow-sky-500/25 hover:shadow-sky-400/40 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full mt-2 py-3 rounded-xl btn-electric text-white font-extrabold text-xs shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
               >
                 {isLoading ? (
                   <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
                     <span>{isSignUp ? 'Create Profile & Continue' : 'Sign In to Dashboard'}</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-4 h-4 text-[#00f7ff]" />
                   </>
                 )}
               </button>
@@ -251,9 +252,9 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={handleGuestAccess}
-                className="w-full py-2.5 rounded-xl bg-[#0e172a] hover:bg-[#13203c] border border-slate-700 text-slate-300 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-2"
+                className="w-full py-2.5 rounded-xl bg-[#081328] hover:bg-[#0c1c3c] border border-cyan-500/30 hover:border-[#00f7ff] text-slate-200 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer hover:shadow-[0_0_15px_rgba(0,247,255,0.2)]"
               >
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <ShieldCheck className="w-4 h-4 text-[#10ff9e]" />
                 Instant Demo as Guest (No Password Required)
               </button>
             </div>

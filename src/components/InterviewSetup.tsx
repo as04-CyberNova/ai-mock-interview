@@ -247,24 +247,24 @@ export const InterviewSetup: React.FC<InterviewSetupProps> = ({
                   onClick={() => setSelectedRole(roleKey)}
                   className={`cursor-pointer rounded-2xl p-5 border transition-all duration-300 relative group overflow-hidden ${
                     isSelected
-                      ? 'glass-panel-glow border-cyan-400/70 bg-gradient-to-br from-cyan-950/40 via-sky-950/30 to-slate-900/60 scale-[1.02]'
-                      : 'border-slate-800/80 bg-slate-900/30 hover:border-slate-700 hover:bg-slate-900/60'
+                      ? 'glass-panel-glow border-[#00f7ff]/70 bg-gradient-to-br from-[#00f7ff]/10 via-[#9d00ff]/10 to-slate-900/60 scale-[1.02] shadow-[0_0_25px_rgba(0,247,255,0.25)]'
+                      : 'border-slate-800/80 bg-slate-900/30 hover:border-[#00f7ff]/40 hover:bg-slate-900/60 hover:shadow-[0_0_15px_rgba(0,247,255,0.12)]'
                   }`}
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className={`p-2.5 rounded-xl border ${
                       isSelected 
-                        ? 'bg-cyan-500/20 border-cyan-400/40 shadow-inner' 
+                        ? 'bg-[#00f7ff]/20 border-[#00f7ff]/50 shadow-[0_0_10px_rgba(0,247,255,0.3)]' 
                         : 'bg-slate-800/60 border-slate-700/60'
                     }`}>
                       {getIcon(roleKey)}
                     </div>
                     {isSelected ? (
-                      <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 text-[9px] font-black">
-                        <CheckCircle2 className="w-3 h-3 text-cyan-400" /> SELECTED
+                      <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#00f7ff]/20 text-[#00f7ff] border border-[#00f7ff]/50 text-[9px] font-black shadow-[0_0_10px_rgba(0,247,255,0.3)]">
+                        <CheckCircle2 className="w-3 h-3 text-[#00f7ff]" /> SELECTED
                       </div>
                     ) : (
-                      <span className="text-[10px] text-slate-500 font-medium group-hover:text-slate-300 transition-colors">Select &rarr;</span>
+                      <span className="text-[10px] text-slate-500 font-medium group-hover:text-[#00f7ff] transition-colors">Select &rarr;</span>
                     )}
                   </div>
 
