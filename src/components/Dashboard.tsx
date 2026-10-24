@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useSyncExternalStore } from 'react';
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -35,7 +35,9 @@ interface DashboardProps {
   onStartNew: () => void;
 }
 
+const subscribe = () => () => {};
 export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onStartNew }) => {
+  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
   const { user } = useAuth();
   const streak = user?.streakDays || (recentSessions.length > 0 ? 1 : 0);
   const hasSessions = recentSessions.length > 0;
@@ -49,29 +51,29 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
 
   return (
     <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8 space-y-8">
-      {/* Top Banner in Monochrome */}
-      <div className="glass-panel-glow rounded-3xl p-6 sm:p-9 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden border border-neutral-800">
+      {/* Top Bento Header Card */}
+      <div className="glass-panel-glow rounded-3xl p-6 sm:p-9 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden border border-white/10 fluent-elevation-2">
         <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-900 text-white text-xs font-bold mb-3.5 border border-neutral-700">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-white/10 text-white text-xs font-semibold mb-3.5">
             <Flame className={`w-3.5 h-3.5 ${streak > 0 ? 'text-white fill-white' : 'text-neutral-500'}`} />
-            <span>
+            <span className="tracking-wide">
               {streak > 0 ? `${streak}-Day Practice Streak` : 'Start Your Practice Streak'}
               {hasSessions ? ' • Active Candidate' : ' • Getting Started'}
             </span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-            Performance &amp; <span className="text-neutral-400">Skill Analytics</span>
+            Performance &amp; <span className="text-neutral-400 font-extralight tracking-normal">Skill Analytics</span>
           </h1>
 
-          <p className="text-sm text-neutral-400 mt-1.5 max-w-xl leading-relaxed">
+          <p className="text-sm text-neutral-400 mt-1.5 max-w-xl font-light leading-relaxed">
             Real-time benchmarking across technical accuracy, communication pace, and STAR answer structure.
           </p>
         </div>
 
         <button
           onClick={onStartNew}
-          className="relative z-10 px-7 py-4 rounded-2xl btn-electric font-black text-sm flex items-center justify-center gap-2.5 shadow-xl transition-all transform hover:scale-[1.02] active:scale-[0.99] whitespace-nowrap cursor-pointer"
+          className="relative z-10 px-8 py-4 rounded-2xl btn-clay-primary font-black text-sm flex items-center justify-center gap-2.5 whitespace-nowrap cursor-pointer"
         >
           <Zap className="w-4 h-4 text-black" />
           <span>Launch New Simulation</span>
@@ -79,106 +81,110 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
         </button>
       </div>
 
-      {/* KPI Highlight Cards in High-Contrast Black & White */}
+      {/* Bento Grid: 4 Dynamic KPI Cards with Glassmorphism & Minimalist Typography */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/* Card 1: Readiness */}
-        <div className="glass-panel rounded-3xl p-6 border border-neutral-800 hover:border-neutral-500 group transition-all duration-300">
-          <div className="flex items-center justify-between text-neutral-400 text-xs font-bold uppercase tracking-wider mb-3">
+        {/* Bento KPI 1: Readiness */}
+        <div className="glass-panel rounded-3xl p-6 border border-white/10 hover:border-white/30 group transition-all duration-300 fluent-elevation-1 hover:-translate-y-1">
+          <div className="flex items-center justify-between text-neutral-400 text-xs font-medium uppercase tracking-wider mb-3">
             <span className="group-hover:text-white transition-colors">Readiness Index</span>
-            <div className="p-2 rounded-xl bg-neutral-900 border border-neutral-800">
+            <div className="p-2.5 rounded-xl bg-neutral-900/90 border border-white/10">
               <Target className="w-4 h-4 text-white" />
             </div>
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-black text-white">{stats.readinessScore}%</span>
             {hasSessions && stats.readinessScore > 0 && (
-              <span className="text-xs text-black bg-white px-2 py-0.5 rounded-full font-bold">
+              <span className="text-[11px] text-black bg-white px-2.5 py-0.5 rounded-full font-bold btn-clay-pill">
                 <TrendingUp className="w-3 h-3 mr-1 inline" /> Active
               </span>
             )}
           </div>
-          <div className="h-2 w-full bg-neutral-950 rounded-full mt-4 overflow-hidden border border-neutral-800">
+          <div className="h-2 w-full bg-neutral-950 rounded-full mt-4 overflow-hidden border border-white/10">
             <div 
-              className="h-full bg-white rounded-full transition-all duration-500" 
+              className="h-full bg-white rounded-full transition-all duration-700" 
               style={{ width: `${stats.readinessScore}%` }} 
             />
           </div>
         </div>
 
-        {/* Card 2: Overall Score */}
-        <div className="glass-panel rounded-3xl p-6 border border-neutral-800 hover:border-neutral-500 group transition-all duration-300">
-          <div className="flex items-center justify-between text-neutral-400 text-xs font-bold uppercase tracking-wider mb-3">
+        {/* Bento KPI 2: Overall Score */}
+        <div className="glass-panel rounded-3xl p-6 border border-white/10 hover:border-white/30 group transition-all duration-300 fluent-elevation-1 hover:-translate-y-1">
+          <div className="flex items-center justify-between text-neutral-400 text-xs font-medium uppercase tracking-wider mb-3">
             <span className="group-hover:text-white transition-colors">Overall Score Avg</span>
-            <div className="p-2 rounded-xl bg-neutral-900 border border-neutral-800">
+            <div className="p-2.5 rounded-xl bg-neutral-900/90 border border-white/10">
               <Trophy className="w-4 h-4 text-white" />
             </div>
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-black text-white">{stats.averageScore}</span>
-            <span className="text-xs text-neutral-400 font-mono">/ 100</span>
+            <span className="text-xs text-neutral-400 font-mono font-light">/ 100</span>
           </div>
-          <p className="text-[11px] text-neutral-400 mt-4 flex items-center gap-1.5">
+          <p className="text-[11px] text-neutral-400 font-light mt-4 flex items-center gap-1.5">
             <Sparkles className="w-3 h-3 text-neutral-300" /> 
             {hasSessions ? 'Calculated from completed sessions' : 'Complete an interview to see rating'}
           </p>
         </div>
 
-        {/* Card 3: Mock Rounds */}
-        <div className="glass-panel rounded-3xl p-6 border border-neutral-800 hover:border-neutral-500 group transition-all duration-300">
-          <div className="flex items-center justify-between text-neutral-400 text-xs font-bold uppercase tracking-wider mb-3">
+        {/* Bento KPI 3: Mock Rounds */}
+        <div className="glass-panel rounded-3xl p-6 border border-white/10 hover:border-white/30 group transition-all duration-300 fluent-elevation-1 hover:-translate-y-1">
+          <div className="flex items-center justify-between text-neutral-400 text-xs font-medium uppercase tracking-wider mb-3">
             <span className="group-hover:text-white transition-colors">Mock Rounds</span>
-            <div className="p-2 rounded-xl bg-neutral-900 border border-neutral-800">
+            <div className="p-2.5 rounded-xl bg-neutral-900/90 border border-white/10">
               <Award className="w-4 h-4 text-white" />
             </div>
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-black text-white">{stats.totalInterviews}</span>
-            <span className="text-xs text-neutral-400">completed</span>
+            <span className="text-xs text-neutral-400 font-light">completed</span>
           </div>
-          <p className="text-[11px] text-neutral-400 mt-4 truncate">
+          <p className="text-[11px] text-neutral-400 font-light mt-4 truncate">
             {stats.roleBreakdown.length > 0 
               ? stats.roleBreakdown.map((r) => r.role.replace('-', ' ')).join(' • ')
               : 'No rounds recorded yet'}
           </p>
         </div>
 
-        {/* Card 4: Time Practiced */}
-        <div className="glass-panel rounded-3xl p-6 border border-neutral-800 hover:border-neutral-500 group transition-all duration-300">
-          <div className="flex items-center justify-between text-neutral-400 text-xs font-bold uppercase tracking-wider mb-3">
+        {/* Bento KPI 4: Time Practiced */}
+        <div className="glass-panel rounded-3xl p-6 border border-white/10 hover:border-white/30 group transition-all duration-300 fluent-elevation-1 hover:-translate-y-1">
+          <div className="flex items-center justify-between text-neutral-400 text-xs font-medium uppercase tracking-wider mb-3">
             <span className="group-hover:text-white transition-colors">Time Practiced</span>
-            <div className="p-2 rounded-xl bg-neutral-900 border border-neutral-800">
+            <div className="p-2.5 rounded-xl bg-neutral-900/90 border border-white/10">
               <Clock className="w-4 h-4 text-white" />
             </div>
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-black text-white">{timePracticedFormatted}</span>
           </div>
-          <p className="text-[11px] text-neutral-400 mt-4">Active interview time</p>
+          <p className="text-[11px] text-neutral-400 font-light mt-4">Active interview time</p>
         </div>
       </div>
 
-      {/* Analytics Charts Section in Monochrome */}
+      {/* Bento Grid: Charts Section (Progression 8-cols, Radar 4-cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-7">
         {/* Score Progression Trend Chart */}
-        <div className="lg:col-span-8 glass-panel rounded-3xl p-6 sm:p-7 border border-neutral-800">
+        <div className="lg:col-span-8 glass-panel-glow rounded-3xl p-6 sm:p-7 border border-white/10 fluent-elevation-2">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+              <h3 className="text-base font-bold text-white flex items-center gap-2 tracking-tight">
                 <BarChart2 className="w-4 h-4 text-white" />
                 Score Progression Timeline
               </h3>
-              <p className="text-xs text-neutral-400 mt-0.5">Performance trajectory across past simulated interview rounds</p>
+              <p className="text-xs text-neutral-400 font-light mt-0.5">Performance trajectory across past simulated interview rounds</p>
             </div>
             {hasSessions && (
-              <span className="text-xs text-black font-extrabold px-3 py-1 rounded-full bg-white font-mono">
+              <span className="text-xs text-black font-extrabold px-3 py-1 rounded-full btn-clay-primary font-mono">
                 {stats.recentActivity.length} RECENT SESSIONS
               </span>
             )}
           </div>
 
           <div className="h-68 w-full flex items-center justify-center">
-            {stats.recentActivity.length === 0 ? (
-              <div className="text-center py-12 text-neutral-500 text-xs">
+            {!mounted ? (
+              <div className="text-center py-12 text-neutral-500 text-xs animate-pulse">
+                Loading analytics charts...
+              </div>
+            ) : stats.recentActivity.length === 0 ? (
+              <div className="text-center py-12 text-neutral-500 text-xs font-light">
                 No score trajectory yet. Complete your first mock interview round to plot progression!
               </div>
             ) : (
@@ -186,7 +192,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
                 <AreaChart data={stats.recentActivity}>
                   <defs>
                     <linearGradient id="scoreGlow" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#ffffff" stopOpacity={0.4}/>
+                      <stop offset="5%" stopColor="#ffffff" stopOpacity={0.35}/>
                       <stop offset="95%" stopColor="#ffffff" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
@@ -194,12 +200,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
                   <YAxis stroke="#525252" fontSize={11} domain={[0, 100]} tickLine={false} />
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: '#0a0a0a', 
-                      borderColor: '#404040', 
-                      borderRadius: '12px', 
+                      backgroundColor: 'rgba(10, 10, 14, 0.95)', 
+                      borderColor: 'rgba(255, 255, 255, 0.2)', 
+                      borderRadius: '16px', 
                       color: '#fff',
                       fontSize: '12px',
-                      boxShadow: '0 8px 30px rgba(0, 0, 0, 0.9)'
+                      boxShadow: '0 12px 32px rgba(0, 0, 0, 0.9)'
                     }} 
                   />
                   <Area 
@@ -216,19 +222,23 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, recentSessions, onS
           </div>
         </div>
 
-        {/* Competency Skill Radar in Monochrome */}
-        <div className="lg:col-span-4 glass-panel rounded-3xl p-6 sm:p-7 border border-neutral-800">
+        {/* Competency Skill Radar */}
+        <div className="lg:col-span-4 glass-panel-glow rounded-3xl p-6 sm:p-7 border border-white/10 fluent-elevation-2">
           <div className="mb-4">
-            <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+            <h3 className="text-base font-bold text-white flex items-center gap-2 tracking-tight">
               <span className="w-2 h-2 rounded-full bg-white" />
               Competency Radar
             </h3>
-            <p className="text-xs text-neutral-400 mt-0.5">Multi-axis skill evaluation</p>
+            <p className="text-xs text-neutral-400 font-light mt-0.5">Multi-axis skill evaluation</p>
           </div>
 
           <div className="h-68 w-full flex items-center justify-center">
-            {stats.skillScores.length === 0 || !hasSessions ? (
-              <div className="text-center py-12 text-neutral-500 text-xs">
+            {!mounted ? (
+              <div className="text-center py-12 text-neutral-500 text-xs animate-pulse">
+                Loading radar...
+              </div>
+            ) : stats.skillScores.length === 0 || !hasSessions ? (
+              <div className="text-center py-12 text-neutral-500 text-xs font-light">
                 Complete an interview to generate your competency radar.
               </div>
             ) : (

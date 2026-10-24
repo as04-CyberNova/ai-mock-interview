@@ -41,6 +41,7 @@ interface InterviewSetupProps {
   selectedMode: SimulationMode;
   setSelectedMode: (mode: SimulationMode) => void;
   onStart: () => void;
+  isGenerating?: boolean;
 }
 
 export const InterviewSetup: React.FC<InterviewSetupProps> = ({
@@ -50,7 +51,8 @@ export const InterviewSetup: React.FC<InterviewSetupProps> = ({
   setSelectedLevel,
   selectedMode,
   setSelectedMode,
-  onStart
+  onStart,
+  isGenerating = false
 }) => {
   const [filterQuery, setFilterQuery] = useState('');
 
@@ -170,67 +172,71 @@ export const InterviewSetup: React.FC<InterviewSetupProps> = ({
 
   return (
     <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      {/* Studio Header in Monochrome */}
+      {/* Studio Header in Minimalist Monochrome */}
       <div className="text-center mb-12">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-900 border border-neutral-700 text-neutral-300 text-xs font-semibold mb-5 shadow-sm">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-white/10 text-neutral-300 text-xs font-semibold mb-5 shadow-sm fluent-elevation-1">
           <Sparkles className="w-3.5 h-3.5 text-white" />
-          <span>Next-Gen Multi-Mode Mock Studio</span>
+          <span className="tracking-wide">Autonomous Voice &amp; STAR Studio</span>
         </div>
 
         <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight leading-tight mb-4">
           Master Real-World <br />
-          <span className="text-neutral-400">Technical &amp; AI Interviews</span>
+          <span className="text-neutral-400 font-extralight tracking-normal">Technical &amp; AI Interviews</span>
         </h1>
 
-        <p className="text-neutral-400 max-w-2xl mx-auto text-base sm:text-lg font-normal leading-relaxed">
+        <p className="text-neutral-400 max-w-2xl mx-auto text-base sm:text-lg font-light leading-relaxed">
           Simulate authentic questions for top tech tracks. Practice with AI voice speech dictation or text, 
           and receive actionable STAR feedback.
         </p>
 
-        {/* Live Metrics Pill in Monochrome */}
-        <div className="flex flex-wrap items-center justify-center gap-6 mt-6 text-xs text-neutral-400 font-medium">
-          <div className="flex items-center gap-1.5">
+        {/* Live Telemetry Pills */}
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-6 text-xs text-neutral-400 font-medium">
+          <div className="flex items-center gap-1.5 glass-panel px-3.5 py-1.5 rounded-full border border-white/10">
             <CheckCircle2 className="w-4 h-4 text-white" />
             <span>10 Tracks • 6 Seniority Tiers</span>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 glass-panel px-3.5 py-1.5 rounded-full border border-white/10">
             <TrendingUp className="w-4 h-4 text-white" />
             <span>5 Specialized Simulation Modes</span>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 glass-panel px-3.5 py-1.5 rounded-full border border-white/10">
             <Volume2 className="w-4 h-4 text-white" />
             <span>Real-time Speech Recognition &amp; Audio</span>
           </div>
         </div>
       </div>
 
+      {/* Main Bento Grid Container */}
       <div className="space-y-8">
-        {/* Step 1: Specialization Track Picker in Monochrome */}
-        <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-neutral-800">
+        {/* Step 1: Specialization Track Picker (Bento Card 1) */}
+        <div className="glass-panel-glow rounded-3xl p-6 sm:p-8 border border-white/10 fluent-elevation-2">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-lg font-extrabold text-white flex items-center gap-2.5">
-                <span className="w-6 h-6 rounded-lg bg-white text-black text-xs flex items-center justify-center font-black">
+              <div className="flex items-center gap-2.5">
+                <span className="w-6 h-6 rounded-lg bg-white text-black text-xs flex items-center justify-center font-black shadow-sm">
                   1
                 </span>
-                Choose Specialization Track ({allRoles.length} Available)
-              </h2>
-              <p className="text-xs text-neutral-400 mt-0.5">Select a role to start practicing authentic interview questions.</p>
+                <h2 className="text-lg font-extrabold text-white tracking-tight">
+                  Choose Specialization Track ({allRoles.length} Available)
+                </h2>
+              </div>
+              <p className="text-xs text-neutral-400 mt-1 font-light">Select a role to start practicing authentic interview questions.</p>
             </div>
 
-            {/* Quick Search Filter */}
+            {/* Search Filter with Glass Treatment */}
             <div className="relative">
-              <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 value={filterQuery}
                 onChange={(e) => setFilterQuery(e.target.value)}
                 placeholder="Filter tracks or skills..."
-                className="pl-9 pr-4 py-2 bg-neutral-950 border border-neutral-800 rounded-xl text-xs text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-white w-full sm:w-60"
+                className="pl-10 pr-4 py-2.5 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl text-xs text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-white/50 w-full sm:w-64 transition-all"
               />
             </div>
           </div>
 
+          {/* Bento Sub-grid for Roles */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredRoles.map((roleKey) => {
               const info = ROLE_METADATA[roleKey];
@@ -241,36 +247,36 @@ export const InterviewSetup: React.FC<InterviewSetupProps> = ({
                   onClick={() => setSelectedRole(roleKey)}
                   className={`cursor-pointer rounded-2xl p-5 border transition-all duration-300 relative group overflow-hidden ${
                     isSelected
-                      ? 'bg-neutral-900 border-white text-white scale-[1.02] shadow-[0_0_20px_rgba(255,255,255,0.15)]'
-                      : 'border-neutral-800 bg-neutral-950/60 hover:border-neutral-600 hover:bg-neutral-900'
+                      ? 'bg-neutral-900/90 border-white text-white scale-[1.02] shadow-[0_12px_32px_rgba(255,255,255,0.12)]'
+                      : 'border-white/10 bg-neutral-950/40 hover:border-white/30 hover:bg-neutral-900/60 hover:-translate-y-1'
                   }`}
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <div className={`p-2.5 rounded-xl border ${
+                    <div className={`p-2.5 rounded-xl border transition-all duration-300 ${
                       isSelected 
-                        ? 'bg-white text-black border-white' 
-                        : 'bg-neutral-900 border-neutral-800'
+                        ? 'bg-white text-black border-white shadow-md' 
+                        : 'bg-neutral-900/80 border-white/10 group-hover:border-white/30'
                     }`}>
                       {getIcon(roleKey)}
                     </div>
                     {isSelected ? (
-                      <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white text-black text-[9px] font-black">
+                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full btn-clay-primary text-[10px] font-black tracking-wide">
                         <CheckCircle2 className="w-3 h-3 text-black" /> SELECTED
                       </div>
                     ) : (
-                      <span className="text-[10px] text-neutral-500 font-medium group-hover:text-white transition-colors">Select &rarr;</span>
+                      <span className="text-[11px] text-neutral-500 font-medium group-hover:text-white transition-colors">Select &rarr;</span>
                     )}
                   </div>
 
-                  <h3 className="text-white font-extrabold text-sm mb-0.5 group-hover:text-neutral-200 transition-colors">
+                  <h3 className="text-white font-bold text-sm mb-0.5 tracking-tight group-hover:text-neutral-200 transition-colors">
                     {info.title}
                   </h3>
-                  <span className="text-[11px] text-neutral-400 font-semibold mb-2 block">{info.badge}</span>
-                  <p className="text-xs text-neutral-400 leading-relaxed mb-3 line-clamp-2">{info.description}</p>
+                  <span className="text-[11px] text-neutral-400 font-normal mb-2.5 block">{info.badge}</span>
+                  <p className="text-xs text-neutral-400 font-light leading-relaxed mb-3 line-clamp-2">{info.description}</p>
 
-                  <div className="flex flex-wrap gap-1 pt-2 border-t border-neutral-800">
+                  <div className="flex flex-wrap gap-1.5 pt-2.5 border-t border-white/10">
                     {info.skills.slice(0, 3).map((sk) => (
-                      <span key={sk} className="text-[9px] font-medium px-2 py-0.5 rounded-md bg-neutral-900 text-neutral-300 border border-neutral-800">
+                      <span key={sk} className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-neutral-900/80 text-neutral-300 border border-white/10">
                         {sk}
                       </span>
                     ))}
@@ -281,131 +287,148 @@ export const InterviewSetup: React.FC<InterviewSetupProps> = ({
           </div>
         </div>
 
-        {/* Step 2: Experience Level Grid in Monochrome */}
-        <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-neutral-800">
-          <div className="mb-5">
-            <h2 className="text-lg font-extrabold text-white flex items-center gap-2.5">
-              <span className="w-6 h-6 rounded-lg bg-white text-black text-xs flex items-center justify-center font-black">
-                2
-              </span>
-              Experience Level &amp; Seniority ({experienceLevels.length} Tiers)
-            </h2>
-            <p className="text-xs text-neutral-400 mt-0.5">
-              Calibrates question difficulty, algorithmic depth, architectural scope, and scoring rubrics.
-            </p>
-          </div>
+        {/* Bento Row: Step 2 (Seniority) & Step 3 (Simulation Mode) side-by-side / stack */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Step 2: Experience Level Grid (Bento Card 2) */}
+          <div className="lg:col-span-12 glass-panel-glow rounded-3xl p-6 sm:p-8 border border-white/10 fluent-elevation-2">
+            <div className="mb-6">
+              <div className="flex items-center gap-2.5">
+                <span className="w-6 h-6 rounded-lg bg-white text-black text-xs flex items-center justify-center font-black shadow-sm">
+                  2
+                </span>
+                <h2 className="text-lg font-extrabold text-white tracking-tight">
+                  Experience Level &amp; Seniority ({experienceLevels.length} Tiers)
+                </h2>
+              </div>
+              <p className="text-xs text-neutral-400 mt-1 font-light">
+                Calibrates question difficulty, algorithmic depth, architectural scope, and scoring rubrics.
+              </p>
+            </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {experienceLevels.map((item) => {
-              const isSelected = selectedLevel === item.level;
-              return (
-                <button
-                  key={item.level}
-                  type="button"
-                  onClick={() => setSelectedLevel(item.level)}
-                  className={`p-4 rounded-2xl border text-left transition-all duration-200 relative group flex flex-col justify-between cursor-pointer ${
-                    isSelected
-                      ? 'border-white bg-neutral-900 text-white shadow-md scale-[1.02]'
-                      : 'border-neutral-800 bg-neutral-950/60 text-neutral-300 hover:border-neutral-600 hover:bg-neutral-900'
-                  }`}
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className={`p-2 rounded-xl border ${
-                        isSelected ? 'bg-white text-black border-white' : 'bg-neutral-900 border-neutral-800'
-                      }`}>
-                        {item.icon}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+              {experienceLevels.map((item) => {
+                const isSelected = selectedLevel === item.level;
+                return (
+                  <button
+                    key={item.level}
+                    type="button"
+                    onClick={() => setSelectedLevel(item.level)}
+                    className={`p-4 rounded-2xl border text-left transition-all duration-200 relative group flex flex-col justify-between cursor-pointer ${
+                      isSelected
+                        ? 'border-white bg-neutral-900/90 text-white shadow-[0_8px_24px_rgba(255,255,255,0.12)] scale-[1.02]'
+                        : 'border-white/10 bg-neutral-950/40 text-neutral-300 hover:border-white/30 hover:bg-neutral-900/60 hover:-translate-y-1'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className={`p-2 rounded-xl border transition-all ${
+                          isSelected ? 'bg-white text-black border-white shadow-sm' : 'bg-neutral-900 border-white/10'
+                        }`}>
+                          {item.icon}
+                        </div>
+                        {isSelected && (
+                          <CheckCircle2 className="w-4 h-4 text-white" />
+                        )}
                       </div>
-                      {isSelected && (
-                        <CheckCircle2 className="w-4 h-4 text-white" />
-                      )}
+                      <div className="font-bold text-xs text-white leading-tight mb-1 tracking-tight">
+                        {item.level}
+                      </div>
+                      <div className="text-[10px] text-neutral-400 font-light leading-tight">
+                        {item.subtitle}
+                      </div>
                     </div>
-                    <div className="font-extrabold text-xs text-white leading-tight mb-1">
-                      {item.level}
-                    </div>
-                    <div className="text-[10px] text-neutral-400 leading-tight">
-                      {item.subtitle}
-                    </div>
-                  </div>
 
-                  <div className="mt-3 pt-2 border-t border-neutral-800">
-                    <span className="text-[9px] font-mono font-bold text-white bg-neutral-900 px-2 py-0.5 rounded-full border border-neutral-700">
-                      {item.years}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
+                    <div className="mt-3.5 pt-2.5 border-t border-white/10">
+                      <span className="text-[9px] font-mono font-bold text-white bg-neutral-900/90 px-2 py-0.5 rounded-full border border-white/10">
+                        {item.years}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Step 3: Simulation Mode Grid (Bento Card 3) */}
+          <div className="lg:col-span-12 glass-panel-glow rounded-3xl p-6 sm:p-8 border border-white/10 fluent-elevation-2">
+            <div className="mb-6">
+              <div className="flex items-center gap-2.5">
+                <span className="w-6 h-6 rounded-lg bg-white text-black text-xs flex items-center justify-center font-black shadow-sm">
+                  3
+                </span>
+                <h2 className="text-lg font-extrabold text-white tracking-tight">
+                  Simulation Mode ({simulationModes.length} Practice Modes)
+                </h2>
+              </div>
+              <p className="text-xs text-neutral-400 mt-1 font-light">
+                Choose your practice format from real-time live voice and speed blitz to deep STAR behavioral drilldowns.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {simulationModes.map((item) => {
+                const isSelected = selectedMode === item.mode;
+                return (
+                  <button
+                    key={item.mode}
+                    type="button"
+                    onClick={() => setSelectedMode(item.mode)}
+                    className={`p-4 rounded-2xl border text-left transition-all duration-200 relative group flex items-start gap-4 cursor-pointer ${
+                      isSelected
+                        ? 'border-white bg-neutral-900/90 text-white shadow-[0_8px_24px_rgba(255,255,255,0.12)] scale-[1.01]'
+                        : 'border-white/10 bg-neutral-950/40 text-neutral-300 hover:border-white/30 hover:bg-neutral-900/60 hover:-translate-y-1'
+                    }`}
+                  >
+                    <div className={`p-3 rounded-xl border shrink-0 mt-0.5 transition-all ${
+                      isSelected ? 'bg-white text-black border-white shadow-sm' : 'bg-neutral-900 border-white/10'
+                    }`}>
+                      {item.icon}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className="font-bold text-sm text-white tracking-tight">{item.title}</span>
+                        {item.badge && (
+                          <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-neutral-900 text-white border border-white/10">
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-neutral-400 font-light leading-snug">{item.subtitle}</p>
+                    </div>
+
+                    {isSelected && (
+                      <CheckCircle2 className="w-5 h-5 text-white shrink-0" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        {/* Step 3: Simulation Mode Grid in Monochrome */}
-        <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-neutral-800">
-          <div className="mb-5">
-            <h2 className="text-lg font-extrabold text-white flex items-center gap-2.5">
-              <span className="w-6 h-6 rounded-lg bg-white text-black text-xs flex items-center justify-center font-black">
-                3
-              </span>
-              Simulation Mode ({simulationModes.length} Practice Modes)
-            </h2>
-            <p className="text-xs text-neutral-400 mt-0.5">
-              Choose your practice format from real-time live voice and speed blitz to deep STAR behavioral drilldowns.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-            {simulationModes.map((item) => {
-              const isSelected = selectedMode === item.mode;
-              return (
-                <button
-                  key={item.mode}
-                  type="button"
-                  onClick={() => setSelectedMode(item.mode)}
-                  className={`p-4 rounded-2xl border text-left transition-all duration-200 relative group flex items-start gap-3.5 cursor-pointer ${
-                    isSelected
-                      ? 'border-white bg-neutral-900 text-white shadow-md scale-[1.01]'
-                      : 'border-neutral-800 bg-neutral-950/60 text-neutral-300 hover:border-neutral-600 hover:bg-neutral-900'
-                  }`}
-                >
-                  <div className={`p-3 rounded-xl border shrink-0 mt-0.5 ${
-                    isSelected ? 'bg-white text-black border-white' : 'bg-neutral-900 border-neutral-800'
-                  }`}>
-                    {item.icon}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="font-extrabold text-sm text-white">{item.title}</span>
-                      {item.badge && (
-                        <span className="text-[9px] font-mono font-black px-2 py-0.5 rounded-full bg-neutral-900 text-white border border-neutral-700">
-                          {item.badge}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-neutral-400 leading-snug">{item.subtitle}</p>
-                  </div>
-
-                  {isSelected && (
-                    <CheckCircle2 className="w-5 h-5 text-white shrink-0" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Start Interview Launch Button in Monochrome */}
-        <div className="pt-4 flex flex-col items-center">
+        {/* Start Interview Launch Button with Claymorphic 3D Tactile Styling */}
+        <div className="pt-6 flex flex-col items-center">
           <button
             onClick={onStart}
-            className="group px-10 py-4 rounded-2xl btn-electric text-black font-black text-base flex items-center gap-3 shadow-2xl transition-all transform hover:scale-[1.02] active:scale-[0.99] cursor-pointer"
+            disabled={isGenerating}
+            className="group px-10 py-4.5 rounded-2xl btn-clay-primary text-black font-black text-base flex items-center gap-3 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <BrainCircuit className="w-5 h-5 text-black" />
-            <span>Launch Mock Interview Session</span>
-            <ChevronRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform text-black" />
+            {isGenerating ? (
+              <>
+                <Sparkles className="w-5 h-5 animate-spin text-black" />
+                <span>AI Generating Custom Questions...</span>
+              </>
+            ) : (
+              <>
+                <BrainCircuit className="w-5 h-5 text-black" />
+                <span>Launch Mock Interview Session</span>
+                <ChevronRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform text-black" />
+              </>
+            )}
           </button>
-          <span className="text-[11px] text-neutral-500 mt-3 font-medium flex items-center gap-1.5">
-            <Volume2 className="w-3.5 h-3.5 text-neutral-400" /> Browser audio &amp; mic enabled • Real-time rubric scorecard
+          <span className="text-[11px] text-neutral-500 mt-3.5 font-light flex items-center gap-2">
+            <Volume2 className="w-3.5 h-3.5 text-neutral-400" /> AI question generation &amp; real-time audio enabled
           </span>
         </div>
       </div>

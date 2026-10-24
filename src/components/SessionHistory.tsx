@@ -18,21 +18,21 @@ export const SessionHistory: React.FC<SessionHistoryProps> = ({ sessions }) => {
   return (
     <div className="max-w-5xl mx-auto py-10 px-4 sm:px-6 space-y-7">
       <div>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-900 border border-neutral-700 text-neutral-300 text-xs font-semibold mb-3">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-white/10 text-neutral-300 text-xs font-semibold mb-3">
           <FileText className="w-3.5 h-3.5 text-white" />
-          <span>Detailed Audit &amp; Transcripts</span>
+          <span className="tracking-wide">Detailed Audit &amp; Transcripts</span>
         </div>
         <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
           Interview Session Archives
         </h1>
-        <p className="text-sm text-neutral-400 mt-1">
+        <p className="text-sm text-neutral-400 font-light mt-1">
           Review your previous mock interview attempts, rubric breakdowns, and AI feedback.
         </p>
       </div>
 
       {sessions.length === 0 ? (
-        <div className="glass-panel rounded-3xl p-14 text-center border border-neutral-800">
-          <p className="text-neutral-400 text-sm">No completed interview sessions yet.</p>
+        <div className="glass-panel-glow rounded-3xl p-14 text-center border border-white/10 fluent-elevation-1">
+          <p className="text-neutral-400 text-sm font-light">No completed interview sessions yet.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -41,20 +41,20 @@ export const SessionHistory: React.FC<SessionHistoryProps> = ({ sessions }) => {
             return (
               <div 
                 key={session.id} 
-                className="glass-panel rounded-3xl border border-neutral-800 overflow-hidden transition-all duration-200"
+                className="glass-panel rounded-3xl border border-white/10 overflow-hidden transition-all duration-300 hover:border-white/30 fluent-elevation-1"
               >
                 <div 
                   onClick={() => toggleExpand(session.id)}
-                  className="p-6 flex items-center justify-between cursor-pointer hover:bg-neutral-900/60 transition-colors select-none"
+                  className="p-6 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors select-none"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-13 h-13 rounded-2xl bg-neutral-900 border border-neutral-700 text-white font-black text-sm flex items-center justify-center uppercase font-mono shadow-sm">
+                    <div className="w-13 h-13 rounded-2xl btn-clay-dark flex items-center justify-center text-white font-bold text-sm uppercase font-mono shadow-sm">
                       {session.role.slice(0, 2)}
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-white capitalize flex items-center gap-2.5">
+                      <h3 className="text-base font-bold text-white capitalize flex items-center gap-2.5 tracking-tight">
                         {session.role.replace('-', ' ')} Mock Session
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-neutral-900 text-neutral-300 border border-neutral-700 font-mono font-bold">
+                        <span className="text-[10px] px-2.5 py-0.5 rounded-full glass-panel text-neutral-300 border border-white/10 font-mono font-medium">
                           {session.mode.toUpperCase()}
                         </span>
                       </h3>

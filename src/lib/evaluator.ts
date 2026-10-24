@@ -1,9 +1,112 @@
 import { AnswerEvaluation, Question } from '@/types/interview';
 
+/**
+ * Gemini model used for scoring. gemini-1.5-flash was shut down by Google in
+ * September 2025, so the default is now gemini-2.5-flash. Override with the
+ * GEMINI_MODEL environment variable when the model is retired again.
+ */
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+
+/**
+ * Evaluates candidate responses using either Google Gemini AI (when GEMINI_API_KEY is configured)
+ * or the built-in deterministic rubric evaluator as a fallback.
+ */
 export async function evaluateAnswer(
   question: Question,
   userAnswer: string
 ): Promise<AnswerEvaluation> {
+  const geminiKey = process.env.GEMINI_API_KEY;
+
+  if (geminiKey) {
+    try {
+      const aiEval = await evaluateWithGemini(question, userAnswer, geminiKey);
+      if (aiEval) {
+        return aiEval;
+      }
+    } catch (error) {
+      // Fall back to the deterministic evaluator, but log why so a retired
+      // model or bad key does not go unnoticed.
+      console.error('[evaluator] Gemini evaluation failed, using heuristic fallback:', error);
+    }
+  }
+
+  return evaluateWithRubricHeuristics(question, userAnswer);
+}
+
+/**
+ * Calls Google AI Studio Gemini API (see GEMINI_MODEL) for deep semantic analysis
+ */
+async function evaluateWithGemini(
+  question: Question,
+  userAnswer: string,
+  apiKey: string
+): Promise<AnswerEvaluation | null> {
+  const prompt = `You are a principal technical interviewer evaluating a candidate's response for a ${question.level} ${question.role} role.
+
+Question: "${question.question}"
+Category: ${question.category}
+Expected Keywords/Concepts: ${question.expectedKeywords.join(', ')}
+Ideal Reference Answer: "${question.idealAnswerOutline}"
+
+Candidate Answer:
+"${userAnswer}"
+
+Evaluate the answer rigorously. Return ONLY a valid JSON object matching this schema:
+{
+  "score": number between 0 and 100,
+  "technicalAccuracyScore": number between 0 and 100,
+  "communicationScore": number between 0 and 100,
+  "structureScore": number between 0 and 100 (STAR method, logical flow),
+  "strengths": ["string", "string"],
+  "improvements": ["string", "string"],
+  "suggestedAnswer": "Detailed model outline that a top 5% candidate would give",
+  "keyKeywordsFound": ["keywords actually covered in the answer"],
+  "missingKeywords": ["important concepts/keywords that were omitted"]
+}`;
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        responseMimeType: 'application/json',
+        temperature: 0.2
+      }
+    })
+  });
+
+  if (!response.ok) {
+    // Do not log the URL: it contains the API key.
+    console.error(`[evaluator] Gemini request to ${GEMINI_MODEL} returned HTTP ${response.status}`);
+    return null;
+  }
+  const data = await response.json();
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) return null;
+
+  const parsed = JSON.parse(text);
+  return {
+    score: Math.min(100, Math.max(0, Math.round(parsed.score || 70))),
+    technicalAccuracyScore: Math.min(100, Math.max(0, Math.round(parsed.technicalAccuracyScore || 70))),
+    communicationScore: Math.min(100, Math.max(0, Math.round(parsed.communicationScore || 70))),
+    structureScore: Math.min(100, Math.max(0, Math.round(parsed.structureScore || 70))),
+    strengths: Array.isArray(parsed.strengths) ? parsed.strengths : ['Good technical reasoning.'],
+    improvements: Array.isArray(parsed.improvements) ? parsed.improvements : ['Consider expanding on quantifiable metrics.'],
+    suggestedAnswer: parsed.suggestedAnswer || question.idealAnswerOutline,
+    keyKeywordsFound: Array.isArray(parsed.keyKeywordsFound) ? parsed.keyKeywordsFound : [],
+    missingKeywords: Array.isArray(parsed.missingKeywords) ? parsed.missingKeywords : []
+  };
+}
+
+/**
+ * Built-in deterministic rubric evaluator
+ */
+function evaluateWithRubricHeuristics(
+  question: Question,
+  userAnswer: string
+): AnswerEvaluation {
   const trimmed = userAnswer.trim();
 
   // If user provided minimal answer

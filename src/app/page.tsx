@@ -6,7 +6,7 @@ import { InterviewSetup } from '@/components/InterviewSetup';
 import { InterviewStudio } from '@/components/InterviewStudio';
 import { Dashboard } from '@/components/Dashboard';
 import { SessionHistory } from '@/components/SessionHistory';
-import { RoleType, ExperienceLevel, InterviewSession, SimulationMode } from '@/types/interview';
+import { RoleType, ExperienceLevel, InterviewSession, SimulationMode, Question } from '@/types/interview';
 import { QUESTION_BANK } from '@/data/questions';
 import { AuthGuard } from '@/components/AuthGuard';
 import { saveSessionToStorage, computeUserStats, useSessions } from '@/lib/session-storage';
@@ -16,14 +16,43 @@ export default function Home() {
   const [selectedRole, setSelectedRole] = useState<RoleType>('data-analyst');
   const [selectedLevel, setSelectedLevel] = useState<ExperienceLevel>('Mid Level');
   const [selectedMode, setSelectedMode] = useState<SimulationMode>('voice');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [sessionQuestions, setSessionQuestions] = useState<Question[]>([]);
   const sessions = useSessions();
 
   // Compute live user stats from real sessions
   const stats = computeUserStats(sessions);
 
-  const activeQuestions = QUESTION_BANK.filter((q) => q.role === selectedRole);
+  const handleStartSession = async () => {
+    setIsGenerating(true);
+    try {
+      const res = await fetch('/api/questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          role: selectedRole,
+          level: selectedLevel,
+          count: selectedMode === 'rapid-fire' ? 5 : 3
+        })
+      });
 
-  const handleStartSession = () => {
+      if (res.ok) {
+        const data = await res.json();
+        if (data.questions && data.questions.length > 0) {
+          setSessionQuestions(data.questions);
+          setCurrentTab('interview');
+          return;
+        }
+      }
+    } catch {
+      // Fallback handled below
+    } finally {
+      setIsGenerating(false);
+    }
+
+    // Fallback to static questions filtered by role
+    const fallback = QUESTION_BANK.filter((q) => q.role === selectedRole);
+    setSessionQuestions(fallback.length > 0 ? fallback : QUESTION_BANK.slice(0, 3));
     setCurrentTab('interview');
   };
 
@@ -52,12 +81,13 @@ export default function Home() {
               selectedMode={selectedMode}
               setSelectedMode={setSelectedMode}
               onStart={handleStartSession}
+              isGenerating={isGenerating}
             />
           )}
 
           {currentTab === 'interview' && (
             <InterviewStudio
-              questions={activeQuestions.length > 0 ? activeQuestions : QUESTION_BANK.slice(0, 3)}
+              questions={sessionQuestions.length > 0 ? sessionQuestions : QUESTION_BANK.slice(0, 3)}
               role={selectedRole}
               level={selectedLevel}
               mode={selectedMode}

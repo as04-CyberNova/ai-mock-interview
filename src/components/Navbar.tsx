@@ -37,43 +37,43 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-black/85 backdrop-blur-2xl border-b border-neutral-800">
+    <header className="sticky top-0 z-50 w-full bg-black/70 backdrop-blur-2xl border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
-        {/* Brand Logo in Monochrome */}
+        {/* Brand Logo with Claymorphic Tactile button */}
         <div 
           onClick={() => setCurrentTab('setup')} 
           className="flex items-center gap-3.5 cursor-pointer group select-none"
         >
           <div className="relative">
-            <div className="w-10 h-10 rounded-2xl bg-white text-black flex items-center justify-center shadow-lg shadow-white/10 group-hover:bg-neutral-200 group-hover:scale-105 transition-all duration-300">
+            <div className="w-10 h-10 rounded-2xl btn-clay-primary flex items-center justify-center transition-all duration-300">
               <Bot className="w-5 h-5 text-black" />
             </div>
-            <div className="absolute -inset-1 bg-white/15 rounded-2xl blur-md -z-10 group-hover:bg-white/30 transition-all duration-300" />
+            <div className="absolute -inset-1 bg-white/20 rounded-2xl blur-md -z-10 group-hover:bg-white/40 transition-all duration-300" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-black text-xl tracking-tight text-white">
-                Prep<span className="text-neutral-400">AI</span>
+              <span className="font-bold text-xl tracking-tight text-white">
+                Prep<span className="text-neutral-400 font-light">AI</span>
               </span>
-              <span className="text-[9px] uppercase font-black tracking-widest px-2 py-0.5 rounded-full bg-neutral-900 text-neutral-300 border border-neutral-700">
+              <span className="text-[9px] uppercase font-mono font-bold tracking-widest px-2 py-0.5 rounded-full glass-panel text-neutral-300 border border-white/10">
                 PRO ENGINE
               </span>
             </div>
-            <p className="text-[11px] text-neutral-400 -mt-0.5 font-medium flex items-center gap-1.5">
+            <p className="text-[11px] text-neutral-400 -mt-0.5 font-light flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
               Real-Time Speech &amp; STAR Evaluator
             </p>
           </div>
         </div>
 
-        {/* Center Segmented Navigation Bar in Monochrome */}
-        <nav className="hidden md:flex items-center p-1 rounded-2xl bg-neutral-950 border border-neutral-800 shadow-inner">
+        {/* Center Bento Pill Navigation Bar */}
+        <nav className="hidden md:flex items-center p-1.5 rounded-2xl glass-panel border border-white/10 shadow-inner">
           <button
             onClick={() => setCurrentTab('setup')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs tracking-wide transition-all duration-200 cursor-pointer ${
               currentTab === 'setup'
-                ? 'bg-white text-black font-extrabold shadow-sm'
-                : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+                ? 'btn-clay-primary text-black font-extrabold'
+                : 'text-neutral-400 hover:text-white font-medium hover:bg-white/5'
             }`}
           >
             <Sparkles className={`w-3.5 h-3.5 ${currentTab === 'setup' ? 'text-black' : 'text-neutral-400'}`} />
@@ -82,10 +82,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
 
           <button
             onClick={() => setCurrentTab('dashboard')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs tracking-wide transition-all duration-200 cursor-pointer ${
               currentTab === 'dashboard'
-                ? 'bg-white text-black font-extrabold shadow-sm'
-                : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+                ? 'btn-clay-primary text-black font-extrabold'
+                : 'text-neutral-400 hover:text-white font-medium hover:bg-white/5'
             }`}
           >
             <LineChart className={`w-3.5 h-3.5 ${currentTab === 'dashboard' ? 'text-black' : 'text-neutral-400'}`} />
@@ -94,10 +94,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
 
           <button
             onClick={() => setCurrentTab('history')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs tracking-wide transition-all duration-200 cursor-pointer ${
               currentTab === 'history'
-                ? 'bg-white text-black font-extrabold shadow-sm'
-                : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+                ? 'btn-clay-primary text-black font-extrabold'
+                : 'text-neutral-400 hover:text-white font-medium hover:bg-white/5'
             }`}
           >
             <BookOpen className={`w-3.5 h-3.5 ${currentTab === 'history' ? 'text-black' : 'text-neutral-400'}`} />
@@ -105,7 +105,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
           </button>
         </nav>
 
-        {/* User Profile / Candidate Chip & Auth Actions in Monochrome */}
+        {/* User Profile / Candidate Chip & Auth Actions in Bento treatment */}
         <div className="flex items-center gap-3">
           {user ? (
             <div className="relative">
@@ -172,7 +172,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
           ) : (
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black font-bold text-xs hover:bg-neutral-200 transition shadow-md"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl btn-clay-primary text-black font-extrabold text-xs transition"
             >
               <LogIn className="w-4 h-4 text-black" />
               Sign In
