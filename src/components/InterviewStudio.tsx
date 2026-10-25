@@ -4,9 +4,10 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Question, AnswerEvaluation, RoleType, ExperienceLevel, InterviewSession, SimulationMode } from '@/types/interview';
 import { ROLE_METADATA } from '@/data/questions';
 import { 
-  Mic, MicOff, Volume2, Send, Sparkles, CheckCircle2, 
+  Mic, MicOff, Volume2, VolumeX, Send, Sparkles, CheckCircle2, 
   AlertCircle, ArrowRight, Lightbulb, Clock, Check, RefreshCw,
-  Cpu, BookOpen, Terminal, Zap, ShieldAlert
+  Cpu, BookOpen, Terminal, Zap, ShieldAlert, Sliders, Play, Square,
+  RotateCcw
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -18,10 +19,12 @@ interface SpeechRecognitionResultList {
   length: number;
   [index: number]: {
     [index: number]: SpeechRecognitionResultItem;
+    isFinal?: boolean;
   };
 }
 
 interface BrowserSpeechEvent {
+  resultIndex: number;
   results: SpeechRecognitionResultList;
 }
 
@@ -31,8 +34,9 @@ interface BrowserSpeechRecognition {
   lang: string;
   start: () => void;
   stop: () => void;
+  abort: () => void;
   onresult: ((event: BrowserSpeechEvent) => void) | null;
-  onerror: (() => void) | null;
+  onerror: ((event: { error: string }) => void) | null;
   onend: (() => void) | null;
 }
 
@@ -55,12 +59,25 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
+  const [interimTranscript, setInterimTranscript] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [isSpeakingQuestion, setIsSpeakingQuestion] = useState(false);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [evaluation, setEvaluation] = useState<AnswerEvaluation | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(0);
+
+  // Audio / Speech Customization Settings
+  const [speechRate, setSpeechRate] = useState<number>(1.0);
+  const [speechPitch, setSpeechPitch] = useState<number>(1.0);
+  const [speechVolume, setSpeechVolume] = useState<number>(1.0);
+  const [showVoiceSettings, setShowVoiceSettings] = useState<boolean>(false);
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoiceURI, setSelectedVoiceURI] = useState<string>('');
+  const [isPausedTTS, setIsPausedTTS] = useState<boolean>(false);
+
+  // Spoken feedback toggle
+  const [isReadingEvaluation, setIsReadingEvaluation] = useState<boolean>(false);
 
   const [completedItems, setCompletedItems] = useState<{
     questionId: string;
@@ -71,6 +88,8 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
   }[]>([]);
 
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
+  const isIntentionalStopRef = useRef<boolean>(false);
+  const finalTranscriptAccumulatorRef = useRef<string>('');
   const currentQ = questions[currentIndex];
   const roleInfo = ROLE_METADATA[role];
 
@@ -82,72 +101,209 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
     return () => clearInterval(interval);
   }, []);
 
+  // Initialize and load system & neural voices
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    const updateVoices = () => {
+      const voices = window.speechSynthesis.getVoices();
+      if (voices && voices.length > 0) {
+        setAvailableVoices(voices);
+
+        // Auto-select preferred high-quality neural voice if not set
+        if (!selectedVoiceURI) {
+          const naturalVoice = voices.find(v => 
+            v.lang.startsWith('en') && 
+            (v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Ava') || v.name.includes('David'))
+          ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+
+          if (naturalVoice) {
+            setSelectedVoiceURI(naturalVoice.voiceURI);
+          }
+        }
+      }
+    };
+
+    updateVoices();
+    window.speechSynthesis.onvoiceschanged = updateVoices;
+
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = null;
+      }
+    };
+  }, [selectedVoiceURI]);
+
   // Web Speech Synthesis (AI Interviewer Voice)
-  const speakQuestion = useCallback((text: string) => {
+  const speakText = useCallback((text: string, onDone?: () => void) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    window.speechSynthesis.cancel();
+    setIsPausedTTS(false);
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = speechRate;
+    utterance.pitch = speechPitch;
+    utterance.volume = speechVolume;
+
+    if (selectedVoiceURI && availableVoices.length > 0) {
+      const match = availableVoices.find(v => v.voiceURI === selectedVoiceURI);
+      if (match) {
+        utterance.voice = match;
+      }
+    }
+
+    utterance.onstart = () => {
+      setIsSpeakingQuestion(true);
+    };
+
+    utterance.onend = () => {
+      setIsSpeakingQuestion(false);
+      setIsPausedTTS(false);
+      if (onDone) onDone();
+    };
+
+    utterance.onerror = (e) => {
+      if (e.error !== 'canceled' && e.error !== 'interrupted') {
+        console.warn('SpeechSynthesis error:', e.error);
+      }
+      setIsSpeakingQuestion(false);
+      setIsPausedTTS(false);
+    };
+
+    window.speechSynthesis.speak(utterance);
+  }, [speechRate, speechPitch, speechVolume, selectedVoiceURI, availableVoices]);
+
+  // Cancel or Stop Speech Synthesis
+  const stopSpeaking = useCallback(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.95;
-      utterance.pitch = 1.05;
-      utterance.onstart = () => setIsSpeakingQuestion(true);
-      utterance.onend = () => setIsSpeakingQuestion(false);
-      utterance.onerror = () => setIsSpeakingQuestion(false);
-      window.speechSynthesis.speak(utterance);
+      setIsSpeakingQuestion(false);
+      setIsPausedTTS(false);
+      setIsReadingEvaluation(false);
     }
   }, []);
 
-  // Speak question automatically in voice mode
+  // Pause / Resume Speech Synthesis
+  const togglePauseTTS = useCallback(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+      setIsPausedTTS(false);
+      setIsSpeakingQuestion(true);
+    } else if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.pause();
+      setIsPausedTTS(true);
+      setIsSpeakingQuestion(false);
+    }
+  }, []);
+
+  // Auto-speak question when changing question or entering voice mode
   useEffect(() => {
     if (mode === 'voice' && currentQ) {
-      speakQuestion(currentQ.question);
+      speakText(currentQ.question);
     }
     return () => {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
     };
-  }, [currentIndex, currentQ, mode, speakQuestion]);
+  }, [currentIndex, currentQ, mode, speakText]);
 
-  // Web Speech Recognition
+  // Read AI evaluation aloud with voice
+  const readEvaluationAloud = () => {
+    if (!evaluation) return;
+    if (isReadingEvaluation) {
+      stopSpeaking();
+      return;
+    }
+
+    const narrative = `Here is your assessment for question ${currentIndex + 1}. Overall score: ${evaluation.score} out of 100. Technical accuracy: ${evaluation.technicalAccuracyScore} percent. Communication clarity: ${evaluation.communicationScore} percent. STAR structure: ${evaluation.structureScore} percent. Key strengths identified: ${evaluation.strengths.slice(0, 2).join('. ')}. Suggested improvement: ${evaluation.improvements.slice(0, 1).join('. ')}`;
+
+    setIsReadingEvaluation(true);
+    speakText(narrative, () => {
+      setIsReadingEvaluation(false);
+    });
+  };
+
+  // Sync ref with current user answer text
+  useEffect(() => {
+    finalTranscriptAccumulatorRef.current = userAnswer;
+  }, [userAnswer]);
+
+  // Web Speech Recognition (Speech-to-Text Dictation)
   const toggleRecording = () => {
     if (typeof window === 'undefined') return;
+
+    // Stop TTS if user starts speaking so mic doesn't catch AI voice
+    if (!isRecording && isSpeakingQuestion) {
+      stopSpeaking();
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SpeechRecognitionClass = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognitionClass) {
-      alert('Speech Recognition is not supported on this browser. Try Chrome or Edge.');
+      alert('Speech Recognition is not supported on this browser. Try Chrome, Edge, or Safari.');
       return;
     }
 
     if (isRecording) {
+      isIntentionalStopRef.current = true;
       if (recognitionRef.current) {
-        recognitionRef.current.stop();
+        try {
+          recognitionRef.current.stop();
+        } catch {
+          // ignore
+        }
       }
       setIsRecording(false);
+      setInterimTranscript('');
       return;
     }
 
     try {
+      isIntentionalStopRef.current = false;
       const recognition: BrowserSpeechRecognition = new SpeechRecognitionClass();
       recognition.continuous = true;
       recognition.interimResults = true;
       recognition.lang = 'en-US';
 
       recognition.onresult = (event: BrowserSpeechEvent) => {
-        let transcript = '';
-        for (let i = 0; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
+        let currentInterim = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const item = event.results[i];
+          const transcriptPiece = item[0].transcript;
+          if (item.isFinal) {
+            const separator = finalTranscriptAccumulatorRef.current && !finalTranscriptAccumulatorRef.current.endsWith(' ') ? ' ' : '';
+            finalTranscriptAccumulatorRef.current = finalTranscriptAccumulatorRef.current + separator + transcriptPiece.trim();
+            setUserAnswer(finalTranscriptAccumulatorRef.current);
+          } else {
+            currentInterim += transcriptPiece;
+          }
         }
-        setUserAnswer(transcript);
+        setInterimTranscript(currentInterim);
       };
 
-      recognition.onerror = () => {
-        setIsRecording(false);
+      recognition.onerror = (e) => {
+        if (e.error !== 'no-speech') {
+          console.warn('SpeechRecognition error:', e.error);
+        }
       };
 
       recognition.onend = () => {
+        // Auto-reconnect if not stopped intentionally and still in recording mode
+        if (!isIntentionalStopRef.current && recognitionRef.current) {
+          try {
+            recognition.start();
+            return;
+          } catch {
+            // ignore
+          }
+        }
         setIsRecording(false);
+        setInterimTranscript('');
       };
 
       recognitionRef.current = recognition;
@@ -155,6 +311,7 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
       setIsRecording(true);
     } catch {
       setIsRecording(false);
+      setInterimTranscript('');
     }
   };
 
@@ -162,10 +319,13 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
     if (!userAnswer.trim() || isEvaluating) return;
 
     if (isRecording && recognitionRef.current) {
+      isIntentionalStopRef.current = true;
       recognitionRef.current.stop();
       setIsRecording(false);
+      setInterimTranscript('');
     }
 
+    stopSpeaking();
     setIsEvaluating(true);
 
     try {
@@ -218,6 +378,7 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
 
   const handleNext = () => {
     if (!evaluation) return;
+    stopSpeaking();
 
     const newCompleted = [
       ...completedItems,
@@ -235,6 +396,8 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
     if (currentIndex + 1 < questions.length) {
       setCurrentIndex((prev) => prev + 1);
       setUserAnswer('');
+      setInterimTranscript('');
+      finalTranscriptAccumulatorRef.current = '';
       setEvaluation(null);
       setShowHint(false);
     } else {
@@ -294,7 +457,7 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
           </span>
         </div>
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-4 sm:gap-5 flex-wrap">
           <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-200 clay-panel px-3.5 py-1.5 rounded-xl border border-cyan-500/20">
             <Clock className="w-3.5 h-3.5 text-cyan-400" />
             <span>{formatTime(timerSeconds)}</span>
@@ -305,12 +468,26 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
           </div>
 
           {/* Futuristic Cyber Progress Bar */}
-          <div className="w-36 bg-[#0a0e22] h-3 rounded-full overflow-hidden border border-cyan-500/30 p-0.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">
+          <div className="w-32 bg-[#0a0e22] h-3 rounded-full overflow-hidden border border-cyan-500/30 p-0.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">
             <div 
               className="bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-pink-500 h-full rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(0,240,255,0.7)]"
               style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
             />
           </div>
+
+          {/* Quick Voice Settings Trigger */}
+          <button
+            onClick={() => setShowVoiceSettings(!showVoiceSettings)}
+            className={`p-2 rounded-xl text-xs font-mono font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+              showVoiceSettings 
+                ? 'btn-clay-cyan text-[#030a1c]' 
+                : 'clay-panel border-cyan-500/30 text-cyan-300 hover:text-white'
+            }`}
+            title="Speech Synthesizer Settings"
+          >
+            <Sliders className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Voice Engine</span>
+          </button>
 
           <button
             onClick={onExit}
@@ -320,6 +497,95 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Expandable Voice & Speech Customization Console */}
+      {showVoiceSettings && (
+        <div className="clay-panel-glow p-5 border border-cyan-500/30 animate-in fade-in duration-200 space-y-4">
+          <div className="flex items-center justify-between border-b border-cyan-500/15 pb-3">
+            <div className="flex items-center gap-2">
+              <Volume2 className="w-4 h-4 text-cyan-400" />
+              <h4 className="text-xs font-mono font-black text-cyan-200 uppercase tracking-wider">
+                Neural Speech Synthesizer Calibration
+              </h4>
+            </div>
+            <span className="text-[11px] font-mono text-pink-400">
+              {availableVoices.length} Voices Detected
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono">
+            {/* Voice Model Selector */}
+            <div className="space-y-1.5 lg:col-span-2">
+              <label className="text-slate-300 text-[11px] font-semibold block">Select Voice Persona</label>
+              <select
+                value={selectedVoiceURI}
+                onChange={(e) => setSelectedVoiceURI(e.target.value)}
+                className="w-full bg-[#0a0e22] border border-cyan-500/30 rounded-xl px-3 py-2 text-cyan-200 focus:outline-none focus:border-cyan-400 text-xs"
+              >
+                {availableVoices.map((v) => (
+                  <option key={v.voiceURI} value={v.voiceURI}>
+                    {v.name} ({v.lang}) {v.default ? '★ Default' : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Speaking Rate Slider */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-[11px]">
+                <span className="text-slate-300">Pace / Speed</span>
+                <span className="text-cyan-300 font-bold">{speechRate.toFixed(2)}x</span>
+              </div>
+              <input
+                type="range"
+                min="0.6"
+                max="1.5"
+                step="0.05"
+                value={speechRate}
+                onChange={(e) => setSpeechRate(parseFloat(e.target.value))}
+                className="w-full accent-cyan-400 cursor-pointer"
+              />
+            </div>
+
+            {/* Speaking Pitch Slider */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-[11px]">
+                <span className="text-slate-300">Pitch Tone</span>
+                <span className="text-pink-300 font-bold">{speechPitch.toFixed(2)}</span>
+              </div>
+              <input
+                type="range"
+                min="0.5"
+                max="1.5"
+                step="0.05"
+                value={speechPitch}
+                onChange={(e) => setSpeechPitch(parseFloat(e.target.value))}
+                className="w-full accent-pink-400 cursor-pointer"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-2">
+            <button
+              onClick={() => speakText("This is a live preview test of your calibrated neural speech synthesizer.")}
+              className="px-4 py-1.5 rounded-xl btn-clay-cyan text-[#030a1c] font-black text-xs flex items-center gap-1.5 cursor-pointer font-mono"
+            >
+              <Play className="w-3 h-3" /> Test Voice Sample
+            </button>
+
+            <button
+              onClick={() => {
+                setSpeechRate(1.0);
+                setSpeechPitch(1.0);
+                setSpeechVolume(1.0);
+              }}
+              className="text-[11px] text-slate-400 hover:text-cyan-300 font-mono flex items-center gap-1 cursor-pointer"
+            >
+              <RotateCcw className="w-3 h-3" /> Reset Defaults
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Studio Arena in Cyber Bento Composition */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-7">
@@ -353,19 +619,44 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                     </span>
                   </h3>
                   <p className="text-xs text-cyan-200/70 font-mono mt-0.5">
-                    {isSpeakingQuestion ? 'Speaking question aloud via neural speech...' : 'Awaiting candidate solution synthesis...'}
+                    {isSpeakingQuestion 
+                      ? 'Speaking question aloud via neural speech...' 
+                      : isPausedTTS 
+                        ? 'Speech synthesis paused.' 
+                        : 'Awaiting candidate solution synthesis...'}
                   </p>
                 </div>
               </div>
 
-              {/* Sound Audio Action with Claymorphic Tactile button */}
-              <button
-                onClick={() => speakQuestion(currentQ.question)}
-                title="Replay Voice Question"
-                className="p-3 rounded-2xl btn-clay-dark cursor-pointer text-cyan-300 hover:text-white"
-              >
-                <Volume2 className="w-4 h-4" />
-              </button>
+              {/* Sound Audio Action Controls */}
+              <div className="flex items-center gap-2">
+                {isSpeakingQuestion ? (
+                  <>
+                    <button
+                      onClick={togglePauseTTS}
+                      title="Pause Voice Question"
+                      className="p-3 rounded-2xl btn-clay-dark cursor-pointer text-amber-300 hover:text-white"
+                    >
+                      <span className="text-xs font-mono font-bold">||</span>
+                    </button>
+                    <button
+                      onClick={stopSpeaking}
+                      title="Stop Speaking"
+                      className="p-3 rounded-2xl btn-clay-dark cursor-pointer text-rose-400 hover:text-white"
+                    >
+                      <Square className="w-4 h-4 fill-current" />
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => speakText(currentQ.question)}
+                    title="Speak Question Aloud"
+                    className="p-3 rounded-2xl btn-clay-cyan cursor-pointer text-[#030a1c] shadow-md group"
+                  >
+                    <Volume2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Question Display with Cyber Clay Surface */}
@@ -407,18 +698,18 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                 Candidate Response Studio
               </label>
 
-              {/* Voice Dictation Toggle with Cyber Claymorphic Styling */}
+              {/* Enhanced Voice Dictation Toggle with Active Status Glow */}
               <button
                 onClick={toggleRecording}
                 className={`px-4.5 py-2.5 rounded-xl text-xs font-black font-mono flex items-center gap-2 cursor-pointer transition-all ${
                   isRecording
-                    ? 'btn-clay-pink animate-pulse text-white shadow-[0_0_20px_rgba(255,0,127,0.7)]'
+                    ? 'btn-clay-pink animate-pulse text-white shadow-[0_0_25px_rgba(255,0,127,0.8)]'
                     : 'btn-clay-cyan text-[#030a1c]'
                 }`}
               >
                 {isRecording ? (
                   <>
-                    <MicOff className="w-3.5 h-3.5" /> Recording Live Mic...
+                    <MicOff className="w-3.5 h-3.5" /> Stop Live Dictation
                   </>
                 ) : (
                   <>
@@ -428,32 +719,63 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
               </button>
             </div>
 
-            {/* Audio Wave Visualizer while speaking */}
+            {/* Audio Wave Visualizer & Real-time Live Interim Preview while speaking */}
             {isRecording && (
-              <div className="mb-4 p-3 rounded-2xl clay-panel border border-pink-500/30 flex items-center justify-center gap-2 h-16 shadow-[0_0_20px_rgba(255,0,127,0.2)]">
-                <span className="text-xs text-pink-200 font-mono font-semibold mr-3">Transcribing Neural Audio Stream...</span>
-                <div className="w-2 rounded-full audio-bar-1" />
-                <div className="w-2 rounded-full audio-bar-2" />
-                <div className="w-2 rounded-full audio-bar-3" />
-                <div className="w-2 rounded-full audio-bar-1" />
-                <div className="w-2 rounded-full audio-bar-2" />
-                <div className="w-2 rounded-full audio-bar-3" />
+              <div className="mb-4 space-y-2">
+                <div className="p-3 rounded-2xl clay-panel border border-pink-500/30 flex items-center justify-between px-5 h-16 shadow-[0_0_20px_rgba(255,0,127,0.2)]">
+                  <div className="flex items-center gap-3">
+                    <span className="w-3 h-3 rounded-full bg-pink-500 animate-ping" />
+                    <span className="text-xs text-pink-200 font-mono font-bold">Microphone Active • Continuous Dictation</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 rounded-full audio-bar-1" />
+                    <div className="w-2 rounded-full audio-bar-2" />
+                    <div className="w-2 rounded-full audio-bar-3" />
+                    <div className="w-2 rounded-full audio-bar-1" />
+                    <div className="w-2 rounded-full audio-bar-2" />
+                    <div className="w-2 rounded-full audio-bar-3" />
+                  </div>
+                </div>
+
+                {interimTranscript && (
+                  <div className="p-2.5 px-4 rounded-xl bg-pink-950/40 border border-pink-500/30 text-xs font-mono text-pink-200 flex items-center gap-2 animate-pulse">
+                    <span className="text-[10px] uppercase font-bold text-pink-400">Live Capturing:</span>
+                    <span className="italic truncate">{interimTranscript}</span>
+                  </div>
+                )}
               </div>
             )}
 
             <textarea
               value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
+              onChange={(e) => {
+                setUserAnswer(e.target.value);
+                finalTranscriptAccumulatorRef.current = e.target.value;
+              }}
               disabled={isEvaluating || evaluation !== null}
               rows={7}
-              placeholder="Formulate your response here. Speak naturally via mic or type structured responses adopting the STAR framework (Situation, Task, Action, Result)..."
+              placeholder="Formulate your response here. Speak naturally via mic dictation or type structured responses adopting the STAR framework (Situation, Task, Action, Result)..."
               className="w-full bg-[#0a0e22]/90 backdrop-blur-md border border-cyan-500/30 rounded-2xl p-4 text-sm text-cyan-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/25 transition-all resize-none font-sans font-light leading-relaxed shadow-[inset_0_2px_6px_rgba(0,0,0,0.8)]"
             />
 
-            <div className="mt-4 flex items-center justify-between">
-              <span className="text-xs text-cyan-300/80 font-mono">
-                Words Count: <strong className="text-white font-bold">{userAnswer.trim() ? userAnswer.trim().split(/\s+/).length : 0}</strong>
-              </span>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-cyan-300/80 font-mono">
+                  Words: <strong className="text-white font-bold">{userAnswer.trim() ? userAnswer.trim().split(/\s+/).length : 0}</strong>
+                </span>
+
+                {userAnswer && !evaluation && (
+                  <button
+                    onClick={() => {
+                      setUserAnswer('');
+                      finalTranscriptAccumulatorRef.current = '';
+                    }}
+                    className="text-[11px] text-slate-400 hover:text-rose-400 font-mono transition cursor-pointer"
+                  >
+                    Clear Text
+                  </button>
+                )}
+              </div>
 
               {!evaluation ? (
                 <button
@@ -494,10 +816,27 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
         {/* Right Bento Column: AI Score & Rubric Analysis */}
         <div className="lg:col-span-5 space-y-6">
           <div className="clay-panel-glow p-6 sm:p-7 border border-cyan-500/25 sticky top-24">
-            <h3 className="text-sm font-black text-white flex items-center gap-2 mb-5 tracking-tight font-mono">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              Real-Time AI Cyber Scorecard
-            </h3>
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-sm font-black text-white flex items-center gap-2 tracking-tight font-mono">
+                <Sparkles className="w-4 h-4 text-cyan-400" />
+                Real-Time AI Cyber Scorecard
+              </h3>
+
+              {evaluation && (
+                <button
+                  onClick={readEvaluationAloud}
+                  className={`p-2 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition cursor-pointer ${
+                    isReadingEvaluation 
+                      ? 'btn-clay-pink text-white animate-pulse' 
+                      : 'clay-panel border-cyan-500/30 text-cyan-300 hover:text-white'
+                  }`}
+                  title="Speak AI Evaluation Breakdown"
+                >
+                  {isReadingEvaluation ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                  <span className="text-[10px]">{isReadingEvaluation ? 'Stop Audio' : 'Read Aloud'}</span>
+                </button>
+              )}
+            </div>
 
             {!evaluation ? (
               <div className="text-center py-16 px-4 border border-dashed border-cyan-500/30 rounded-2xl clay-panel">
