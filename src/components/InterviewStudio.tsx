@@ -6,7 +6,7 @@ import { ROLE_METADATA } from '@/data/questions';
 import { 
   Mic, MicOff, Volume2, Send, Sparkles, CheckCircle2, 
   AlertCircle, ArrowRight, Lightbulb, Clock, Check, RefreshCw,
-  Cpu, BookOpen
+  Cpu, BookOpen, Terminal, Zap, ShieldAlert
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -88,7 +88,7 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 0.95;
-      utterance.pitch = 1.0;
+      utterance.pitch = 1.05;
       utterance.onstart = () => setIsSpeakingQuestion(true);
       utterance.onend = () => setIsSpeakingQuestion(false);
       utterance.onerror = () => setIsSpeakingQuestion(false);
@@ -99,22 +99,24 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
   // Speak question automatically in voice mode
   useEffect(() => {
     if (mode === 'voice' && currentQ) {
-      const timer = setTimeout(() => {
-        speakQuestion(currentQ.question);
-      }, 500);
-      return () => clearTimeout(timer);
+      speakQuestion(currentQ.question);
     }
-  }, [currentIndex, mode, currentQ, speakQuestion]);
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [currentIndex, currentQ, mode, speakQuestion]);
 
-  // Web Speech Recognition (Mic Dictation)
+  // Web Speech Recognition
   const toggleRecording = () => {
     if (typeof window === 'undefined') return;
 
-    const SpeechRec = (window as unknown as { SpeechRecognition?: new () => BrowserSpeechRecognition; webkitSpeechRecognition?: new () => BrowserSpeechRecognition }).SpeechRecognition ||
-      (window as unknown as { SpeechRecognition?: new () => BrowserSpeechRecognition; webkitSpeechRecognition?: new () => BrowserSpeechRecognition }).webkitSpeechRecognition;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SpeechRecognitionClass = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
-    if (!SpeechRec) {
-      alert('Speech recognition is not natively supported in this browser. You can type your response instead.');
+    if (!SpeechRecognitionClass) {
+      alert('Speech Recognition is not supported on this browser. Try Chrome or Edge.');
       return;
     }
 
@@ -127,7 +129,7 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
     }
 
     try {
-      const recognition = new SpeechRec();
+      const recognition: BrowserSpeechRecognition = new SpeechRecognitionClass();
       recognition.continuous = true;
       recognition.interimResults = true;
       recognition.lang = 'en-US';
@@ -135,7 +137,7 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
       recognition.onresult = (event: BrowserSpeechEvent) => {
         let transcript = '';
         for (let i = 0; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript + ' ';
+          transcript += event.results[i][0].transcript;
         }
         setUserAnswer(transcript);
       };
@@ -148,8 +150,8 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
         setIsRecording(false);
       };
 
-      recognition.start();
       recognitionRef.current = recognition;
+      recognition.start();
       setIsRecording(true);
     } catch {
       setIsRecording(false);
@@ -157,7 +159,7 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
   };
 
   const handleEvaluate = async () => {
-    if (!userAnswer.trim()) return;
+    if (!userAnswer.trim() || isEvaluating) return;
 
     if (isRecording && recognitionRef.current) {
       recognitionRef.current.stop();
@@ -190,10 +192,10 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
 
       if (evalData.score >= 80) {
         confetti({
-          particleCount: 50,
-          spread: 60,
+          particleCount: 60,
+          spread: 70,
           origin: { y: 0.8 },
-          colors: ['#ffffff', '#a3a3a3', '#525252']
+          colors: ['#00f0ff', '#ff007f', '#9d4edd', '#00ff66', '#ffaa00']
         });
       }
     } catch {
@@ -249,8 +251,8 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
         newCompleted.reduce((acc, curr) => acc + curr.evaluation.structureScore, 0) / newCompleted.length
       );
 
-      const finalSession: InterviewSession = {
-        id: 'session-' + Date.now(),
+      const session: InterviewSession = {
+        id: `sess-${Date.now()}`,
         role,
         level,
         mode,
@@ -260,11 +262,10 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
         overallScore: totalScore,
         technicalAccuracyAverage: techAvg,
         communicationAverage: commAvg,
-        structureAverage: structAvg,
-        summaryFeedback: `Demonstrated solid analytical fundamentals with an overall score of ${totalScore}%. Continue practicing STAR frameworks for complex scenarios.`
+        structureAverage: structAvg
       };
 
-      onComplete(finalSession);
+      onComplete(session);
     }
   };
 
@@ -275,75 +276,84 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6">
-      {/* HUD Header Bar in Monochrome */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 glass-panel rounded-2xl p-4 sm:p-5 border border-neutral-800 shadow-xl">
-        <div className="flex items-center gap-3.5">
-          <div className="px-3.5 py-1.5 rounded-xl bg-neutral-900 border border-neutral-700 text-white font-bold text-xs flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-            {roleInfo.title} • {level}
-          </div>
-          <span className="text-[11px] font-mono text-neutral-400 bg-neutral-950 px-3 py-1 rounded-lg border border-neutral-800 uppercase font-semibold">
-            Mode: {mode}
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-6">
+      {/* Top Telemetry Bar */}
+      <div className="clay-panel-glow p-4 px-6 flex flex-wrap items-center justify-between gap-4 border border-cyan-500/25">
+        <div className="flex items-center gap-3">
+          <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#00f0ff]" />
+          <span className="font-extrabold text-sm text-white tracking-wide">
+            {roleInfo.title}
+          </span>
+          <span className="text-slate-500">•</span>
+          <span className="text-xs text-pink-400 font-mono font-bold clay-panel px-2.5 py-0.5 rounded-full border border-pink-500/25">
+            {level}
+          </span>
+          <span className="text-slate-500">•</span>
+          <span className="text-xs text-cyan-300 font-mono font-bold clay-panel px-2.5 py-0.5 rounded-full border border-cyan-500/25 uppercase">
+            {mode} PROTOCOL
           </span>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 font-mono text-xs font-bold text-white bg-neutral-900 px-3.5 py-1.5 rounded-xl border border-neutral-800">
-            <Clock className="w-3.5 h-3.5 text-neutral-400" />
+        <div className="flex items-center gap-5">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-200 clay-panel px-3.5 py-1.5 rounded-xl border border-cyan-500/20">
+            <Clock className="w-3.5 h-3.5 text-cyan-400" />
             <span>{formatTime(timerSeconds)}</span>
           </div>
 
-          <div className="text-xs text-neutral-300 font-medium">
-            Question <span className="text-white font-black">{currentIndex + 1}</span> of {questions.length}
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-300">
+            <span>QUESTION {currentIndex + 1} / {questions.length}</span>
           </div>
 
-          <div className="w-36 bg-neutral-950 h-2.5 rounded-full overflow-hidden border border-neutral-800 p-0.5">
+          {/* Futuristic Cyber Progress Bar */}
+          <div className="w-36 bg-[#0a0e22] h-3 rounded-full overflow-hidden border border-cyan-500/30 p-0.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">
             <div 
-              className="bg-white h-full rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-pink-500 h-full rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(0,240,255,0.7)]"
               style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
             />
           </div>
 
           <button
             onClick={onExit}
-            className="text-xs text-neutral-400 hover:text-white font-semibold transition-colors px-2 py-1 rounded-lg hover:bg-neutral-900 cursor-pointer"
+            className="text-xs text-rose-400 hover:text-rose-200 font-mono font-bold transition-colors px-3 py-1.5 rounded-xl hover:bg-rose-500/10 border border-rose-500/20 cursor-pointer"
           >
-            Exit Round
+            Exit Arena
           </button>
         </div>
       </div>
 
-      {/* Main Studio Arena in Bento Composition */}
+      {/* Main Studio Arena in Cyber Bento Composition */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-7">
-        {/* Left Bento Column: AI Hologram Agent & Live Question & Candidate Studio */}
+        {/* Left Bento Column: AI Agent & Live Question & Candidate Studio */}
         <div className="lg:col-span-7 space-y-6">
-          {/* Bento Subcard 1: AI Agent & Question Display */}
-          <div className="glass-panel-glow rounded-3xl p-7 border border-white/10 relative overflow-hidden fluent-elevation-2">
+          {/* Subcard 1: AI Agent & Question Display */}
+          <div className="clay-panel-glow p-6 sm:p-7 border border-cyan-500/25 relative overflow-hidden">
+            {/* Background Cyber Glow */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+
             {/* AI Agent Avatar Status Bar */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6 relative z-10">
               <div className="flex items-center gap-4">
                 <div className="relative">
-                  <div className="w-13 h-13 rounded-2xl bg-white text-black flex items-center justify-center border border-white shadow-xl ai-orb-pulse btn-clay-primary">
-                    <Sparkles className="w-6 h-6 text-black" />
+                  <div className="w-13 h-13 rounded-2xl btn-clay-cyan flex items-center justify-center border border-white/50 shadow-xl ai-orb-pulse">
+                    <Sparkles className="w-6 h-6 text-[#030a1c]" />
                   </div>
                   {isSpeakingQuestion && (
                     <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-white"></span>
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-cyan-400 shadow-[0_0_8px_#00f0ff]"></span>
                     </span>
                   )}
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2 tracking-tight">
-                    Autonomous Interviewer
-                    <span className="text-[10px] glass-panel text-neutral-300 border border-white/10 px-2.5 py-0.5 rounded-full font-mono font-normal">
+                  <h3 className="text-sm font-extrabold text-white flex items-center gap-2 tracking-tight">
+                    Neural Interviewer AI
+                    <span className="text-[10px] clay-badge-cyan px-2.5 py-0.5 rounded-full font-mono font-semibold">
                       {currentQ.category}
                     </span>
                   </h3>
-                  <p className="text-xs text-neutral-400 font-light mt-0.5">
-                    {isSpeakingQuestion ? 'Speaking question aloud...' : 'Awaiting your answer formulation...'}
+                  <p className="text-xs text-cyan-200/70 font-mono mt-0.5">
+                    {isSpeakingQuestion ? 'Speaking question aloud via neural speech...' : 'Awaiting candidate solution synthesis...'}
                   </p>
                 </div>
               </div>
@@ -352,36 +362,36 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
               <button
                 onClick={() => speakQuestion(currentQ.question)}
                 title="Replay Voice Question"
-                className="p-3 rounded-xl btn-clay-dark cursor-pointer fluent-press"
+                className="p-3 rounded-2xl btn-clay-dark cursor-pointer text-cyan-300 hover:text-white"
               >
-                <Volume2 className="w-4 h-4 text-white" />
+                <Volume2 className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Question Display with Specular Glass */}
-            <div className="my-5 p-5 rounded-2xl glass-panel border border-white/10">
-              <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-widest block mb-2 font-mono">
+            {/* Question Display with Cyber Clay Surface */}
+            <div className="my-5 p-6 rounded-2xl clay-card border border-cyan-500/25 relative z-10">
+              <span className="text-[10px] text-pink-400 font-bold uppercase tracking-widest block mb-2 font-mono">
                 QUESTION #{currentIndex + 1}
               </span>
-              <h2 className="text-lg sm:text-xl font-bold text-white leading-relaxed tracking-tight">
+              <h2 className="text-lg sm:text-xl font-extrabold text-white leading-relaxed tracking-tight">
                 &ldquo;{currentQ.question}&rdquo;
               </h2>
             </div>
 
             {/* Smart Hint Expander */}
             {currentQ.hint && (
-              <div className="pt-2">
+              <div className="pt-2 relative z-10">
                 {!showHint ? (
                   <button
                     onClick={() => setShowHint(true)}
-                    className="inline-flex items-center gap-2 text-xs text-neutral-400 hover:text-white font-medium transition-colors group cursor-pointer"
+                    className="inline-flex items-center gap-2 text-xs text-amber-300/80 hover:text-amber-200 font-mono font-semibold transition-colors group cursor-pointer"
                   >
-                    <Lightbulb className="w-4 h-4 text-white group-hover:scale-110 transition-transform" />
-                    <span className="font-light">Need technical direction or hint?</span>
+                    <Lightbulb className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+                    <span>Need technical direction or hint?</span>
                   </button>
                 ) : (
-                  <div className="p-3.5 rounded-xl glass-panel border border-white/10 text-neutral-200 text-xs flex items-start gap-2.5 animate-in fade-in duration-300 font-light">
-                    <Lightbulb className="w-4 h-4 text-white shrink-0 mt-0.5" />
+                  <div className="p-4 rounded-xl clay-panel border border-amber-500/30 text-amber-200 text-xs flex items-start gap-2.5 animate-in fade-in duration-300 font-light">
+                    <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                     <span className="leading-relaxed">{currentQ.hint}</span>
                   </div>
                 )}
@@ -389,30 +399,30 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
             )}
           </div>
 
-          {/* Bento Subcard 2: User Response Console */}
-          <div className="glass-panel-glow rounded-3xl p-6 sm:p-7 border border-white/10 fluent-elevation-2">
+          {/* Subcard 2: User Response Console */}
+          <div className="clay-panel-glow p-6 sm:p-7 border border-purple-500/25 relative overflow-hidden">
             <div className="flex items-center justify-between mb-4">
-              <label className="text-xs font-bold text-neutral-300 uppercase tracking-widest flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-white" />
+              <label className="text-xs font-mono font-bold text-purple-200 uppercase tracking-widest flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-purple-400" />
                 Candidate Response Studio
               </label>
 
-              {/* Voice Dictation Toggle with Claymorphic Styling */}
+              {/* Voice Dictation Toggle with Cyber Claymorphic Styling */}
               <button
                 onClick={toggleRecording}
-                className={`px-4.5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 cursor-pointer transition-all ${
+                className={`px-4.5 py-2.5 rounded-xl text-xs font-black font-mono flex items-center gap-2 cursor-pointer transition-all ${
                   isRecording
-                    ? 'btn-clay-primary animate-pulse'
-                    : 'btn-clay-dark'
+                    ? 'btn-clay-pink animate-pulse text-white shadow-[0_0_20px_rgba(255,0,127,0.7)]'
+                    : 'btn-clay-cyan text-[#030a1c]'
                 }`}
               >
                 {isRecording ? (
                   <>
-                    <MicOff className="w-3.5 h-3.5 text-black" /> Stop Mic
+                    <MicOff className="w-3.5 h-3.5" /> Recording Live Mic...
                   </>
                 ) : (
                   <>
-                    <Mic className="w-3.5 h-3.5 text-white" /> Voice Dictation
+                    <Mic className="w-3.5 h-3.5" /> Voice Dictation
                   </>
                 )}
               </button>
@@ -420,13 +430,14 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
 
             {/* Audio Wave Visualizer while speaking */}
             {isRecording && (
-              <div className="mb-4 p-3 rounded-2xl glass-panel border border-white/10 flex items-center justify-center gap-1.5 h-14">
-                <span className="text-xs text-white font-light mr-3">Transcribing Live Speech...</span>
-                <div className="w-1.5 bg-white rounded-full audio-bar-1" />
-                <div className="w-1.5 bg-neutral-300 rounded-full audio-bar-2" />
-                <div className="w-1.5 bg-neutral-400 rounded-full audio-bar-3" />
-                <div className="w-1.5 bg-white rounded-full audio-bar-1" />
-                <div className="w-1.5 bg-neutral-300 rounded-full audio-bar-2" />
+              <div className="mb-4 p-3 rounded-2xl clay-panel border border-pink-500/30 flex items-center justify-center gap-2 h-16 shadow-[0_0_20px_rgba(255,0,127,0.2)]">
+                <span className="text-xs text-pink-200 font-mono font-semibold mr-3">Transcribing Neural Audio Stream...</span>
+                <div className="w-2 rounded-full audio-bar-1" />
+                <div className="w-2 rounded-full audio-bar-2" />
+                <div className="w-2 rounded-full audio-bar-3" />
+                <div className="w-2 rounded-full audio-bar-1" />
+                <div className="w-2 rounded-full audio-bar-2" />
+                <div className="w-2 rounded-full audio-bar-3" />
               </div>
             )}
 
@@ -436,42 +447,42 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
               disabled={isEvaluating || evaluation !== null}
               rows={7}
               placeholder="Formulate your response here. Speak naturally via mic or type structured responses adopting the STAR framework (Situation, Task, Action, Result)..."
-              className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl p-4 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-white/50 focus:ring-1 focus:ring-white/20 transition-all resize-none font-sans font-light leading-relaxed"
+              className="w-full bg-[#0a0e22]/90 backdrop-blur-md border border-cyan-500/30 rounded-2xl p-4 text-sm text-cyan-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/25 transition-all resize-none font-sans font-light leading-relaxed shadow-[inset_0_2px_6px_rgba(0,0,0,0.8)]"
             />
 
             <div className="mt-4 flex items-center justify-between">
-              <span className="text-xs text-neutral-400 font-mono font-light">
-                Words Count: <strong className="text-white font-semibold">{userAnswer.trim() ? userAnswer.trim().split(/\s+/).length : 0}</strong>
+              <span className="text-xs text-cyan-300/80 font-mono">
+                Words Count: <strong className="text-white font-bold">{userAnswer.trim() ? userAnswer.trim().split(/\s+/).length : 0}</strong>
               </span>
 
               {!evaluation ? (
                 <button
                   onClick={handleEvaluate}
                   disabled={!userAnswer.trim() || isEvaluating}
-                  className="px-8 py-3.5 rounded-xl btn-clay-primary disabled:opacity-40 disabled:cursor-not-allowed font-black text-sm flex items-center gap-2 cursor-pointer"
+                  className="px-8 py-3.5 rounded-xl btn-clay-cyan disabled:opacity-40 disabled:cursor-not-allowed font-black text-xs font-mono uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-[0_8px_20px_rgba(0,240,255,0.4)]"
                 >
                   {isEvaluating ? (
                     <>
-                      <RefreshCw className="w-4 h-4 animate-spin text-black" /> Evaluating Answer...
+                      <RefreshCw className="w-4 h-4 animate-spin text-[#030a1c]" /> Evaluating Response...
                     </>
                   ) : (
                     <>
-                      <Send className="w-4 h-4 text-black" /> Evaluate Response
+                      <Send className="w-4 h-4 text-[#030a1c]" /> Evaluate Response
                     </>
                   )}
                 </button>
               ) : (
                 <button
                   onClick={handleNext}
-                  className="px-8 py-3.5 rounded-xl btn-clay-primary font-black text-sm flex items-center gap-2 cursor-pointer"
+                  className="px-8 py-3.5 rounded-xl btn-clay-pink font-black text-xs font-mono uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-[0_8px_20px_rgba(255,0,127,0.4)]"
                 >
                   {currentIndex + 1 < questions.length ? (
                     <>
-                      Next Question <ArrowRight className="w-4 h-4 text-black" />
+                      Next Question <ArrowRight className="w-4 h-4" />
                     </>
                   ) : (
                     <>
-                      Finalize Interview <Check className="w-4 h-4 text-black" />
+                      Finalize Interview <Check className="w-4 h-4" />
                     </>
                   )}
                 </button>
@@ -482,82 +493,82 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
 
         {/* Right Bento Column: AI Score & Rubric Analysis */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="glass-panel-glow rounded-3xl p-6 sm:p-7 border border-white/10 sticky top-24 fluent-elevation-2">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2 mb-5 tracking-tight">
-              <Sparkles className="w-4 h-4 text-white" />
-              Real-Time AI Scorecard
+          <div className="clay-panel-glow p-6 sm:p-7 border border-cyan-500/25 sticky top-24">
+            <h3 className="text-sm font-black text-white flex items-center gap-2 mb-5 tracking-tight font-mono">
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+              Real-Time AI Cyber Scorecard
             </h3>
 
             {!evaluation ? (
-              <div className="text-center py-16 px-4 border border-dashed border-white/10 rounded-2xl glass-panel">
-                <div className="w-14 h-14 rounded-2xl btn-clay-dark mx-auto flex items-center justify-center text-white mb-4">
+              <div className="text-center py-16 px-4 border border-dashed border-cyan-500/30 rounded-2xl clay-panel">
+                <div className="w-14 h-14 rounded-2xl btn-clay-purple mx-auto flex items-center justify-center text-white mb-4 shadow-[0_0_20px_rgba(157,78,221,0.4)]">
                   <Cpu className="w-7 h-7" />
                 </div>
-                <h4 className="text-sm font-bold text-neutral-200 mb-1 tracking-tight">Awaiting Candidate Submission</h4>
-                <p className="text-xs text-neutral-400 font-light max-w-xs mx-auto leading-relaxed">
+                <h4 className="text-sm font-bold text-cyan-200 mb-1 tracking-tight">Awaiting Candidate Submission</h4>
+                <p className="text-xs text-slate-400 font-light max-w-xs mx-auto leading-relaxed">
                   Submit your response to receive immediate multi-attribute rubric grades on accuracy, clarity, and STAR structure.
                 </p>
               </div>
             ) : (
               <div className="space-y-6 animate-in fade-in duration-300">
-                {/* Score Hero Card with Glassmorphic specular and Claymorphic badge */}
-                <div className="flex items-center justify-between p-5 rounded-2xl glass-panel border border-white/10">
+                {/* Score Hero Card with Cyber Clay Treatment */}
+                <div className="flex items-center justify-between p-5 rounded-2xl clay-card border border-cyan-500/30">
                   <div>
-                    <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-widest block font-mono">
+                    <span className="text-[10px] text-cyan-300/80 font-mono font-bold uppercase tracking-widest block">
                       OVERALL SCORE
                     </span>
-                    <span className="text-4xl font-black text-white">
-                      {evaluation.score}<span className="text-lg text-neutral-400 font-light">/100</span>
+                    <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-fuchsia-400 drop-shadow-[0_0_12px_rgba(0,240,255,0.5)]">
+                      {evaluation.score}<span className="text-lg text-slate-400 font-light">/100</span>
                     </span>
                   </div>
 
-                  <div className={`px-4 py-1.5 rounded-full text-xs font-black tracking-wide ${
+                  <div className={`px-4 py-1.5 rounded-full text-xs font-black font-mono tracking-wide ${
                     evaluation.score >= 80 
-                      ? 'btn-clay-primary text-black'
+                      ? 'btn-clay-cyan text-[#030a1c]'
                       : evaluation.score >= 60 
-                      ? 'btn-clay-dark text-white'
-                      : 'glass-panel text-neutral-400 border border-white/10'
+                      ? 'btn-clay-purple text-white'
+                      : 'btn-clay-pink text-white'
                   }`}>
                     {evaluation.score >= 80 ? 'EXEMPLARY' : evaluation.score >= 60 ? 'COMPETENT' : 'NEEDS REVISION'}
                   </div>
                 </div>
 
-                {/* Submetrics Breakdown */}
+                {/* Submetrics Breakdown with Colourful Neon Gradients */}
                 <div className="space-y-3.5">
                   <div>
-                    <div className="flex justify-between text-xs mb-1.5 font-medium">
-                      <span className="text-neutral-400 font-light">Technical Accuracy</span>
+                    <div className="flex justify-between text-xs mb-1.5 font-mono font-semibold">
+                      <span className="text-cyan-300">Technical Accuracy</span>
                       <span className="text-white font-bold">{evaluation.technicalAccuracyScore}%</span>
                     </div>
-                    <div className="h-2 w-full bg-neutral-950 rounded-full overflow-hidden border border-white/10">
+                    <div className="h-2.5 w-full bg-[#0a0e22] rounded-full overflow-hidden border border-cyan-500/30">
                       <div 
-                        className="h-full bg-white rounded-full transition-all duration-700"
+                        className="h-full bg-gradient-to-r from-cyan-500 to-teal-400 rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(0,240,255,0.7)]"
                         style={{ width: `${evaluation.technicalAccuracyScore}%` }}
                       />
                     </div>
                   </div>
 
                   <div>
-                    <div className="flex justify-between text-xs mb-1.5 font-medium">
-                      <span className="text-neutral-400 font-light">Communication &amp; Clarity</span>
+                    <div className="flex justify-between text-xs mb-1.5 font-mono font-semibold">
+                      <span className="text-pink-300">Communication &amp; Clarity</span>
                       <span className="text-white font-bold">{evaluation.communicationScore}%</span>
                     </div>
-                    <div className="h-2 w-full bg-neutral-950 rounded-full overflow-hidden border border-white/10">
+                    <div className="h-2.5 w-full bg-[#0a0e22] rounded-full overflow-hidden border border-pink-500/30">
                       <div 
-                        className="h-full bg-neutral-300 rounded-full transition-all duration-700"
+                        className="h-full bg-gradient-to-r from-pink-500 to-rose-400 rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(255,0,127,0.7)]"
                         style={{ width: `${evaluation.communicationScore}%` }}
                       />
                     </div>
                   </div>
 
                   <div>
-                    <div className="flex justify-between text-xs mb-1.5 font-medium">
-                      <span className="text-neutral-400 font-light">STAR Structure &amp; Logic</span>
+                    <div className="flex justify-between text-xs mb-1.5 font-mono font-semibold">
+                      <span className="text-purple-300">STAR Structure &amp; Logic</span>
                       <span className="text-white font-bold">{evaluation.structureScore}%</span>
                     </div>
-                    <div className="h-2 w-full bg-neutral-950 rounded-full overflow-hidden border border-white/10">
+                    <div className="h-2.5 w-full bg-[#0a0e22] rounded-full overflow-hidden border border-purple-500/30">
                       <div 
-                        className="h-full bg-neutral-400 rounded-full transition-all duration-700"
+                        className="h-full bg-gradient-to-r from-purple-500 to-indigo-400 rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(157,78,221,0.7)]"
                         style={{ width: `${evaluation.structureScore}%` }}
                       />
                     </div>
@@ -567,11 +578,11 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                 {/* Strengths */}
                 {evaluation.strengths.length > 0 && (
                   <div className="space-y-2">
-                    <h5 className="text-xs font-bold text-white flex items-center gap-1.5 uppercase tracking-wider">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-white" /> Strengths Identified
+                    <h5 className="text-xs font-mono font-bold text-emerald-300 flex items-center gap-1.5 uppercase tracking-wider">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Strengths Identified
                     </h5>
                     {evaluation.strengths.map((s, i) => (
-                      <p key={i} className="text-xs text-neutral-300 pl-3.5 border-l-2 border-white leading-relaxed font-light">
+                      <p key={i} className="text-xs text-slate-300 pl-3.5 border-l-2 border-emerald-400 leading-relaxed font-light">
                         {s}
                       </p>
                     ))}
@@ -581,11 +592,11 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                 {/* Improvements */}
                 {evaluation.improvements.length > 0 && (
                   <div className="space-y-2">
-                    <h5 className="text-xs font-bold text-neutral-400 flex items-center gap-1.5 uppercase tracking-wider">
-                      <AlertCircle className="w-3.5 h-3.5 text-neutral-400" /> High-Impact Improvements
+                    <h5 className="text-xs font-mono font-bold text-pink-300 flex items-center gap-1.5 uppercase tracking-wider">
+                      <AlertCircle className="w-3.5 h-3.5 text-pink-400" /> High-Impact Improvements
                     </h5>
                     {evaluation.improvements.map((imp, i) => (
-                      <p key={i} className="text-xs text-neutral-400 pl-3.5 border-l-2 border-neutral-700 leading-relaxed font-light">
+                      <p key={i} className="text-xs text-slate-300 pl-3.5 border-l-2 border-pink-400 leading-relaxed font-light">
                         {imp}
                       </p>
                     ))}
@@ -593,11 +604,11 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                 )}
 
                 {/* Model Answer Outline */}
-                <div className="pt-3 border-t border-white/10">
-                  <h5 className="text-xs font-bold text-neutral-300 mb-2 flex items-center gap-1.5 uppercase tracking-widest">
-                    <BookOpen className="w-3.5 h-3.5 text-white" /> Model Answer Blueprint
+                <div className="pt-3 border-t border-cyan-500/20">
+                  <h5 className="text-xs font-mono font-bold text-cyan-300 mb-2 flex items-center gap-1.5 uppercase tracking-widest">
+                    <BookOpen className="w-3.5 h-3.5 text-cyan-400" /> Model Answer Blueprint
                   </h5>
-                  <p className="text-xs text-neutral-300 glass-panel p-4 rounded-xl border border-white/10 leading-relaxed font-sans font-light">
+                  <p className="text-xs text-slate-200 clay-panel p-4 rounded-xl border border-cyan-500/20 leading-relaxed font-sans font-light">
                     {evaluation.suggestedAnswer}
                   </p>
                 </div>

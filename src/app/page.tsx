@@ -63,7 +63,7 @@ export default function Home() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-black text-neutral-100 flex flex-col selection:bg-white selection:text-black">
+      <div className="min-h-screen bg-[#070913] text-slate-100 flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
         {/* Top Navigation */}
         <Navbar
           currentTab={currentTab}
@@ -109,13 +109,16 @@ export default function Home() {
           )}
         </main>
 
-        {/* Monochrome Footer */}
-        <footer className="border-t border-neutral-900 bg-black py-8 text-center text-xs text-neutral-500">
+        {/* Cyber Futuristic Footer */}
+        <footer className="border-t border-cyan-500/15 bg-[#050711] py-8 text-center text-xs text-slate-400 font-mono">
           <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>© 2026 PrepAI Studio. Built with Next.js, Tailwind CSS &amp; AI Evaluation Engine.</p>
+            <p>© 2026 PrepAI Cyber Studio. Powered by Autonomous Speech Recognition &amp; STAR Neural Engine.</p>
             <div className="flex items-center gap-6">
-              <span className="text-neutral-400">Monochrome Black &amp; White Edition</span>
-              <span className="text-white font-semibold">Active Session</span>
+              <span className="text-cyan-400">Cyber Claymorphism Edition</span>
+              <span className="text-pink-400 font-bold flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#00f0ff]" />
+                Neural Grid Online
+              </span>
             </div>
           </div>
         </footer>

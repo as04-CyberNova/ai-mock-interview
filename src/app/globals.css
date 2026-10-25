@@ -4,147 +4,239 @@
   --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: var(--font-mono), monospace;
 
-  /* Monochromatic Black & White High-Contrast Tokens */
-  --bg-pure-black: #000000;
-  --bg-surface: #0a0a0a;
-  --bg-card: #121212;
-  --bg-card-hover: #1a1a1a;
-  --border-subtle: #262626;
-  --border-medium: #404040;
-  --border-strong: #737373;
-  --border-bright: #ffffff;
-  --text-primary: #ffffff;
-  --text-secondary: #a3a3a3;
-  --text-muted: #737373;
+  /* Cyber Futuristic Neon & Iridescent Clay Tokens */
+  --cyber-bg: #070913;
+  --cyber-neon-cyan: #00f0ff;
+  --cyber-neon-pink: #ff007f;
+  --cyber-neon-purple: #9d4edd;
+  --cyber-neon-lime: #00ff66;
+  --cyber-neon-amber: #ffaa00;
+  --cyber-neon-blue: #3b82f6;
 }
 
 body {
-  background-color: #000000;
-  color: #ededed;
+  background-color: #070913;
+  color: #f1f5f9;
   overflow-x: hidden;
+  position: relative;
   background-image: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 255, 255, 0.08), transparent),
-    radial-gradient(circle 700px at 90% 20%, rgba(255, 255, 255, 0.03), transparent),
-    radial-gradient(circle 600px at 10% 80%, rgba(255, 255, 255, 0.02), transparent);
+    radial-gradient(circle 800px at 15% 10%, rgba(0, 240, 255, 0.12), transparent),
+    radial-gradient(circle 750px at 85% 25%, rgba(255, 0, 127, 0.12), transparent),
+    radial-gradient(circle 900px at 50% 75%, rgba(157, 78, 221, 0.1), transparent),
+    radial-gradient(circle 600px at 90% 90%, rgba(0, 255, 102, 0.08), transparent);
+  background-attachment: fixed;
 }
 
-/* Minimalist Monochrome Grid */
+/* Futuristic Cyber Grid Pattern */
 .bg-grid-pattern {
-  background-size: 32px 32px;
+  background-size: 36px 36px;
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(0, 240, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 0, 127, 0.07) 1px, transparent 1px);
 }
 
-.bg-radial-vignette {
-  background: radial-gradient(circle at 50% 50%, rgba(20, 20, 20, 0.6) 0%, rgba(0, 0, 0, 0.98) 100%);
-}
-
-/* Monochromatic Glass Panels & Glassmorphic Cards */
-.glass-panel {
-  background: rgba(14, 14, 18, 0.65);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 
-    0 8px 32px 0 rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.03);
-}
-
-.glass-panel-glow {
-  background: linear-gradient(135deg, rgba(20, 20, 24, 0.8) 0%, rgba(10, 10, 14, 0.85) 100%);
-  backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 
-    0 16px 40px -10px rgba(0, 0, 0, 0.8),
-    0 0 30px -5px rgba(255, 255, 255, 0.06),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.22),
-    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.5);
-}
-
-.glass-card-interactive {
-  background: rgba(18, 18, 22, 0.55);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 
-    0 6px 20px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.glass-card-interactive:hover {
-  background: rgba(26, 26, 32, 0.75);
-  border-color: rgba(255, 255, 255, 0.35);
-  transform: translateY(-4px);
-  box-shadow: 
-    0 16px 36px -8px rgba(0, 0, 0, 0.7),
-    0 0 25px -2px rgba(255, 255, 255, 0.12),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
+.bg-cyber-vignette {
+  background: radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.4) 0%, rgba(7, 9, 19, 0.95) 100%);
 }
 
 /* ========================================================
-   Claymorphism Buttons (Tactile 3D Soft-Puffy Depth & Spring)
+   CYBER FUTURISTIC CLAYMORPHISM SYSTEM
+   Tactile 3D Soft-Puffy Depth + Vibrant Neon Rim + Inner Specular
    ======================================================== */
+
+/* Claymorphic Card base (Dark Cyber Clay with neon rim) */
+.clay-card {
+  position: relative;
+  background: linear-gradient(145deg, #13172e, #0e1224);
+  border-radius: 1.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 
+    12px 16px 32px -4px rgba(0, 0, 0, 0.75),
+    -6px -6px 20px 0 rgba(255, 255, 255, 0.04),
+    inset 2px 2px 5px rgba(255, 255, 255, 0.2),
+    inset -3px -4px 8px rgba(0, 0, 0, 0.6);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.clay-card:hover {
+  border-color: rgba(0, 240, 255, 0.4);
+  transform: translateY(-4px) scale-[1.01];
+  box-shadow: 
+    16px 24px 40px -6px rgba(0, 0, 0, 0.85),
+    0 0 25px rgba(0, 240, 255, 0.2),
+    inset 2px 2px 6px rgba(255, 255, 255, 0.3),
+    inset -3px -4px 10px rgba(0, 0, 0, 0.7);
+}
+
+/* Vibrant Cyber Clay Panels with Glowing Backdrops */
+.clay-panel-glow {
+  background: linear-gradient(135deg, rgba(20, 26, 52, 0.85) 0%, rgba(13, 17, 36, 0.9) 100%);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    16px 24px 48px -10px rgba(0, 0, 0, 0.85),
+    0 0 35px -5px rgba(0, 240, 255, 0.15),
+    inset 2px 2px 6px 0 rgba(255, 255, 255, 0.28),
+    inset -3px -4px 10px 0 rgba(0, 0, 0, 0.75);
+}
+
+.clay-panel {
+  background: rgba(18, 24, 48, 0.7);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    10px 14px 28px rgba(0, 0, 0, 0.6),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.18),
+    inset -2px -3px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* ========================================================
+   COLOURFUL CLAYMORPHIC BUTTONS (3D Soft Tactile & Neon Glow)
+   ======================================================== */
+
+/* Cyan Neon Clay Primary Button */
+.btn-clay-cyan,
 .btn-clay-primary {
   position: relative;
-  background: #ffffff;
-  color: #000000 !important;
-  border-radius: 1rem;
+  background: linear-gradient(135deg, #00f0ff 0%, #00a8ff 100%);
+  color: #030a1c !important;
+  border-radius: 1.25rem;
   font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.6);
   box-shadow: 
-    0 8px 16px -2px rgba(0, 0, 0, 0.6),
-    0 4px 6px -1px rgba(0, 0, 0, 0.3),
-    inset 0 -4px 6px rgba(0, 0, 0, 0.25),
-    inset 0 4px 6px rgba(255, 255, 255, 0.95);
+    0 10px 24px -2px rgba(0, 240, 255, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    inset 0 4px 6px rgba(255, 255, 255, 0.85),
+    inset 0 -4px 6px rgba(0, 75, 120, 0.5);
   transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   transform: translateY(0);
 }
 
+.btn-clay-cyan:hover,
 .btn-clay-primary:hover {
-  background: #f4f4f5;
+  background: linear-gradient(135deg, #33f3ff 0%, #1ab2ff 100%);
   transform: translateY(-2px);
   box-shadow: 
-    0 12px 24px -4px rgba(0, 0, 0, 0.7),
-    0 6px 12px -2px rgba(255, 255, 255, 0.2),
-    inset 0 -3px 5px rgba(0, 0, 0, 0.2),
-    inset 0 5px 8px rgba(255, 255, 255, 1);
+    0 14px 30px -2px rgba(0, 240, 255, 0.75),
+    0 0 20px rgba(0, 240, 255, 0.5),
+    inset 0 5px 8px rgba(255, 255, 255, 0.95),
+    inset 0 -4px 6px rgba(0, 75, 120, 0.6);
 }
 
+.btn-clay-cyan:active,
 .btn-clay-primary:active {
   transform: translateY(2px) scale(0.985);
   box-shadow: 
-    0 2px 6px rgba(0, 0, 0, 0.6),
-    inset 0 3px 6px rgba(0, 0, 0, 0.35),
+    0 3px 8px rgba(0, 240, 255, 0.4),
+    inset 0 4px 8px rgba(0, 50, 90, 0.6),
     inset 0 -2px 4px rgba(255, 255, 255, 0.4);
 }
 
+/* Pink / Magenta Cyber Clay Button */
+.btn-clay-pink {
+  position: relative;
+  background: linear-gradient(135deg, #ff007f 0%, #d9006c 100%);
+  color: #ffffff !important;
+  border-radius: 1.25rem;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 10px 24px -2px rgba(255, 0, 127, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    inset 0 4px 6px rgba(255, 255, 255, 0.75),
+    inset 0 -4px 6px rgba(100, 0, 50, 0.5);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn-clay-pink:hover {
+  background: linear-gradient(135deg, #ff2a94 0%, #eb0075 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 14px 30px -2px rgba(255, 0, 127, 0.75),
+    0 0 22px rgba(255, 0, 127, 0.5),
+    inset 0 5px 8px rgba(255, 255, 255, 0.9),
+    inset 0 -4px 6px rgba(100, 0, 50, 0.6);
+}
+
+.btn-clay-pink:active {
+  transform: translateY(2px) scale(0.985);
+  box-shadow: 
+    0 3px 8px rgba(255, 0, 127, 0.4),
+    inset 0 4px 8px rgba(80, 0, 40, 0.6),
+    inset 0 -2px 4px rgba(255, 255, 255, 0.3);
+}
+
+/* Purple / Violet Cyber Clay Button */
+.btn-clay-purple {
+  position: relative;
+  background: linear-gradient(135deg, #9d4edd 0%, #7b2cbf 100%);
+  color: #ffffff !important;
+  border-radius: 1.25rem;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 10px 24px -2px rgba(157, 78, 221, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    inset 0 4px 6px rgba(255, 255, 255, 0.7),
+    inset 0 -4px 6px rgba(60, 9, 108, 0.5);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn-clay-purple:hover {
+  background: linear-gradient(135deg, #b062ec 0%, #8b35d6 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 14px 30px -2px rgba(157, 78, 221, 0.75),
+    0 0 22px rgba(157, 78, 221, 0.5),
+    inset 0 5px 8px rgba(255, 255, 255, 0.85);
+}
+
+/* Lime Neon Cyber Clay Button */
+.btn-clay-lime {
+  position: relative;
+  background: linear-gradient(135deg, #00ff66 0%, #00cc52 100%);
+  color: #031e0b !important;
+  border-radius: 1.25rem;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 10px 24px -2px rgba(0, 255, 102, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    inset 0 4px 6px rgba(255, 255, 255, 0.8),
+    inset 0 -4px 6px rgba(0, 80, 30, 0.5);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Dark Tactical Cyber Clay Button */
 .btn-clay-dark {
   position: relative;
-  background: #18181b;
-  color: #f4f4f5 !important;
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(145deg, #182042, #10162e);
+  color: #e2e8f0 !important;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
   font-weight: 700;
   box-shadow: 
-    0 8px 16px -4px rgba(0, 0, 0, 0.8),
+    0 10px 20px -4px rgba(0, 0, 0, 0.7),
     0 2px 6px rgba(0, 0, 0, 0.4),
-    inset 0 3px 4px rgba(255, 255, 255, 0.12),
-    inset 0 -3px 5px rgba(0, 0, 0, 0.8);
+    inset 0 3px 5px rgba(255, 255, 255, 0.2),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.8);
   transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   transform: translateY(0);
 }
 
 .btn-clay-dark:hover {
-  background: #232328;
-  border-color: rgba(255, 255, 255, 0.25);
+  background: linear-gradient(145deg, #222c59, #171f40);
+  border-color: rgba(0, 240, 255, 0.4);
+  color: #ffffff !important;
   transform: translateY(-2px);
   box-shadow: 
-    0 12px 24px -4px rgba(0, 0, 0, 0.9),
-    0 0 16px rgba(255, 255, 255, 0.08),
-    inset 0 3px 5px rgba(255, 255, 255, 0.2),
+    0 14px 26px -4px rgba(0, 0, 0, 0.8),
+    0 0 16px rgba(0, 240, 255, 0.25),
+    inset 0 3px 6px rgba(255, 255, 255, 0.3),
     inset 0 -3px 6px rgba(0, 0, 0, 0.85);
 }
 
@@ -153,122 +245,146 @@ body {
   box-shadow: 
     0 2px 4px rgba(0, 0, 0, 0.8),
     inset 0 4px 8px rgba(0, 0, 0, 0.9),
-    inset 0 -1px 2px rgba(255, 255, 255, 0.05);
+    inset 0 -1px 2px rgba(255, 255, 255, 0.08);
+}
+
+/* Claymorphic Badges / Pills */
+.clay-badge-cyan {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 168, 255, 0.1) 100%);
+  border: 1px solid rgba(0, 240, 255, 0.45);
+  color: #38bdf8;
+  border-radius: 9999px;
+  box-shadow: 
+    0 4px 12px rgba(0, 240, 255, 0.2),
+    inset 0 2px 3px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.4);
+}
+
+.clay-badge-pink {
+  background: linear-gradient(135deg, rgba(255, 0, 127, 0.2) 0%, rgba(217, 0, 108, 0.1) 100%);
+  border: 1px solid rgba(255, 0, 127, 0.45);
+  color: #f472b6;
+  border-radius: 9999px;
+  box-shadow: 
+    0 4px 12px rgba(255, 0, 127, 0.2),
+    inset 0 2px 3px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.4);
+}
+
+.clay-badge-purple {
+  background: linear-gradient(135deg, rgba(157, 78, 221, 0.2) 0%, rgba(123, 44, 191, 0.1) 100%);
+  border: 1px solid rgba(157, 78, 221, 0.45);
+  color: #c084fc;
+  border-radius: 9999px;
+  box-shadow: 
+    0 4px 12px rgba(157, 78, 221, 0.2),
+    inset 0 2px 3px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.4);
+}
+
+.clay-badge-lime {
+  background: linear-gradient(135deg, rgba(0, 255, 102, 0.2) 0%, rgba(0, 204, 82, 0.1) 100%);
+  border: 1px solid rgba(0, 255, 102, 0.45);
+  color: #4ade80;
+  border-radius: 9999px;
+  box-shadow: 
+    0 4px 12px rgba(0, 255, 102, 0.2),
+    inset 0 2px 3px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.4);
+}
+
+.clay-badge-amber {
+  background: linear-gradient(135deg, rgba(255, 170, 0, 0.2) 0%, rgba(230, 140, 0, 0.1) 100%);
+  border: 1px solid rgba(255, 170, 0, 0.45);
+  color: #fbbf24;
+  border-radius: 9999px;
+  box-shadow: 
+    0 4px 12px rgba(255, 170, 0, 0.2),
+    inset 0 2px 3px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.4);
 }
 
 .btn-clay-pill {
   position: relative;
   border-radius: 9999px;
   box-shadow: 
-    0 4px 10px rgba(0, 0, 0, 0.4),
-    inset 0 2px 3px rgba(255, 255, 255, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.5),
+    inset 0 2px 3px rgba(255, 255, 255, 0.25),
     inset 0 -2px 3px rgba(0, 0, 0, 0.6);
   transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.btn-clay-pill:hover {
-  transform: translateY(-1px);
-  box-shadow: 
-    0 6px 14px rgba(0, 0, 0, 0.5),
-    inset 0 2px 4px rgba(255, 255, 255, 0.2),
-    inset 0 -2px 3px rgba(0, 0, 0, 0.7);
-}
-
-.btn-clay-pill:active {
-  transform: translateY(1px) scale(0.98);
-  box-shadow: 
-    0 1px 3px rgba(0, 0, 0, 0.6),
-    inset 0 3px 5px rgba(0, 0, 0, 0.8);
-}
-
 /* Backward-compatible aliasing */
-.btn-electric {
-  composes: btn-clay-primary;
+.glass-panel {
+  composes: clay-panel;
+}
+.glass-panel-glow {
+  composes: clay-panel-glow;
+}
+.glass-card-interactive {
+  composes: clay-card;
 }
 
-/* Material / Fluent Design Animations & Timing */
-.fluent-elevation-1 {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 1px rgba(255,255,255,0.1);
-  transition: all 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
-}
-
-.fluent-elevation-2 {
-  box-shadow: 0 8px 20px -4px rgba(0,0,0,0.6), 0 0 2px rgba(255,255,255,0.15);
-  transition: all 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
-}
-
-.fluent-elevation-3 {
-  box-shadow: 0 16px 36px -6px rgba(0,0,0,0.8), 0 0 3px rgba(255,255,255,0.2);
-  transition: all 0.35s cubic-bezier(0.1, 0.9, 0.2, 1);
-}
-
-.fluent-press {
-  transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.fluent-press:active {
-  transform: scale(0.98);
-}
-
-/* Bento Grid Spacing & Aspect Card helpers */
-.bento-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.bento-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-  opacity: 0.6;
-}
-
-/* Sleek Monochrome Orb */
-@keyframes orbPulse {
+/* Cyber Futuristic Hologram Pulsing Orb */
+@keyframes cyberOrbPulse {
   0%, 100% {
     transform: scale(1);
-    opacity: 0.9;
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
+    box-shadow: 
+      0 0 25px rgba(0, 240, 255, 0.6),
+      0 0 60px rgba(255, 0, 127, 0.35),
+      inset 0 4px 8px rgba(255, 255, 255, 0.9),
+      inset 0 -4px 8px rgba(0, 0, 0, 0.6);
   }
   50% {
     transform: scale(1.06);
-    opacity: 1;
-    filter: drop-shadow(0 0 35px rgba(255, 255, 255, 0.7));
+    box-shadow: 
+      0 0 45px rgba(0, 240, 255, 0.9),
+      0 0 90px rgba(255, 0, 127, 0.55),
+      inset 0 5px 10px rgba(255, 255, 255, 1),
+      inset 0 -4px 8px rgba(0, 0, 0, 0.5);
   }
 }
 
 .ai-orb-pulse {
-  animation: orbPulse 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: cyberOrbPulse 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-/* Sound wave bars (Monochrome) */
-@keyframes audioWave1 { 0%, 100% { height: 6px; } 50% { height: 30px; } }
-@keyframes audioWave2 { 0%, 100% { height: 16px; } 50% { height: 40px; } }
-@keyframes audioWave3 { 0%, 100% { height: 8px; } 50% { height: 26px; } }
+/* Sound wave bars (Colourful Cyber Glow) */
+@keyframes audioWave1 { 0%, 100% { height: 6px; } 50% { height: 32px; } }
+@keyframes audioWave2 { 0%, 100% { height: 16px; } 50% { height: 42px; } }
+@keyframes audioWave3 { 0%, 100% { height: 8px; } 50% { height: 28px; } }
 
-.audio-bar-1 { animation: audioWave1 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-.audio-bar-2 { animation: audioWave2 0.75s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.15s; }
-.audio-bar-3 { animation: audioWave3 0.85s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.3s; }
+.audio-bar-1 { 
+  background: linear-gradient(to top, #00f0ff, #00ff66);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.8);
+  animation: audioWave1 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
+}
+.audio-bar-2 { 
+  background: linear-gradient(to top, #ff007f, #9d4edd);
+  box-shadow: 0 0 10px rgba(255, 0, 127, 0.8);
+  animation: audioWave2 0.75s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.15s; 
+}
+.audio-bar-3 { 
+  background: linear-gradient(to top, #ffaa00, #ff007f);
+  box-shadow: 0 0 10px rgba(255, 170, 0, 0.8);
+  animation: audioWave3 0.85s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.3s; 
+}
 
-/* Custom Monochrome Scrollbar */
+/* Cyber Glowing Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: #070913;
 }
 ::-webkit-scrollbar-thumb {
-  background: #262626;
+  background: linear-gradient(to bottom, #1e293b, #334155);
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #ffffff;
-  box-shadow: 0 0 8px #ffffff;
+  background: linear-gradient(to bottom, #00f0ff, #ff007f);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.7);
 }
