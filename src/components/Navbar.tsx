@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
@@ -26,9 +26,24 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
   const router = useRouter();
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const displayName = user?.name || (user?.email ? user.email.split('@')[0] : 'Candidate');
   const displayRole = user?.targetRole || 'Interview Track';
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuOpen]);
 
   const handleLogout = () => {
     logout();
@@ -107,10 +122,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
         {/* User Profile / Candidate Chip & Auth Actions */}
         <div className="flex items-center gap-3">
           {user ? (
-            <div className="relative">
+            <div className="relative" ref={menuRef}>
               <button 
+                type="button"
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="flex items-center gap-3 p-1.5 px-3 rounded-2xl clay-panel border border-[#E8E2D9] hover:border-[#2D5A4A]/50 transition-all cursor-pointer group"
+                aria-expanded={menuOpen}
+                aria-haspopup="true"
               >
                 <div className="hidden sm:flex flex-col text-right">
                   <span className="text-xs font-black text-[#1A1A1A] group-hover:text-[#2D5A4A] transition-colors">{displayName}</span>
@@ -125,18 +143,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
                   </div>
                   <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#2D5A4A] border-2 border-[#FFFFFF]" />
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-[#6B7280] hidden sm:block group-hover:translate-y-0.5 transition-transform" />
+                <ChevronDown className={`w-3.5 h-3.5 text-[#6B7280] hidden sm:block transition-transform duration-200 ${menuOpen ? 'rotate-180' : 'group-hover:translate-y-0.5'}`} />
               </button>
 
               {/* Profile Dropdown Menu */}
               {menuOpen && (
-                <div className="absolute right-0 mt-2 w-60 rounded-2xl clay-card border border-[#E8E2D9] shadow-xl p-2 z-50 bg-[#FFFFFF]">
-                  <div className="px-3 py-2 border-b border-[#E8E2D9]">
+                <div className="absolute right-0 top-full mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-2xl bg-white border border-[#E8E2D9] shadow-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="px-3 py-2.5 border-b border-[#E8E2D9]/80 bg-[#FAF8F5]/60 rounded-xl mb-1.5">
                     <p className="text-xs font-bold text-[#1A1A1A]">{displayName}</p>
                     <p className="text-[11px] text-[#6B7280] font-mono truncate">{user.email}</p>
                   </div>
 
-                  <div className="py-1.5 space-y-1">
+                  <div className="space-y-1">
                     <Link
                       href="/dashboard"
                       onClick={() => setMenuOpen(false)}
@@ -156,8 +174,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
                     </Link>
                   </div>
 
-                  <div className="pt-1.5 border-t border-[#E8E2D9]">
+                  <div className="mt-1.5 pt-1.5 border-t border-[#E8E2D9]/80">
                     <button
+                      type="button"
                       onClick={handleLogout}
                       className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition cursor-pointer"
                     >
