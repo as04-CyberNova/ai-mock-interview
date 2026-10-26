@@ -441,36 +441,36 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-6">
       {/* Top Telemetry Bar */}
-      <div className="clay-panel-glow p-4 px-6 flex flex-wrap items-center justify-between gap-4 border border-cyan-500/25">
+      <div className="clay-panel-glow p-4 px-6 flex flex-wrap items-center justify-between gap-4 border border-[#E8E2D9]">
         <div className="flex items-center gap-3">
-          <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#00f0ff]" />
-          <span className="font-extrabold text-sm text-white tracking-wide">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#2D5A4A] animate-pulse" />
+          <span className="font-extrabold text-sm text-[#1A1A1A] tracking-wide">
             {roleInfo.title}
           </span>
-          <span className="text-slate-500">•</span>
-          <span className="text-xs text-pink-400 font-mono font-bold clay-panel px-2.5 py-0.5 rounded-full border border-pink-500/25">
+          <span className="text-[#6B7280]">•</span>
+          <span className="text-xs text-[#2D5A4A] font-mono font-bold clay-panel px-2.5 py-0.5 rounded-full border border-[#E8E2D9]">
             {level}
           </span>
-          <span className="text-slate-500">•</span>
-          <span className="text-xs text-cyan-300 font-mono font-bold clay-panel px-2.5 py-0.5 rounded-full border border-cyan-500/25 uppercase">
+          <span className="text-[#6B7280]">•</span>
+          <span className="text-xs text-[#1A1A1A] font-mono font-bold clay-panel px-2.5 py-0.5 rounded-full border border-[#E8E2D9] uppercase">
             {mode} PROTOCOL
           </span>
         </div>
 
         <div className="flex items-center gap-4 sm:gap-5 flex-wrap">
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-200 clay-panel px-3.5 py-1.5 rounded-xl border border-cyan-500/20">
-            <Clock className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#1A1A1A] clay-panel px-3.5 py-1.5 rounded-xl border border-[#E8E2D9]">
+            <Clock className="w-3.5 h-3.5 text-[#2D5A4A]" />
             <span>{formatTime(timerSeconds)}</span>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-300">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#6B7280]">
             <span>QUESTION {currentIndex + 1} / {questions.length}</span>
           </div>
 
-          {/* Futuristic Cyber Progress Bar */}
-          <div className="w-32 bg-[#0a0e22] h-3 rounded-full overflow-hidden border border-cyan-500/30 p-0.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">
+          {/* Progress Bar */}
+          <div className="w-32 bg-[#FAF8F5] h-3 rounded-full overflow-hidden border border-[#E8E2D9] p-0.5">
             <div 
-              className="bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-pink-500 h-full rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(0,240,255,0.7)]"
+              className="bg-gradient-to-r from-[#2D5A4A] to-[#3d7863] h-full rounded-full transition-all duration-500"
               style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
             />
           </div>
@@ -480,8 +480,8 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
             onClick={() => setShowVoiceSettings(!showVoiceSettings)}
             className={`p-2 rounded-xl text-xs font-mono font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
               showVoiceSettings 
-                ? 'btn-clay-cyan text-[#030a1c]' 
-                : 'clay-panel border-cyan-500/30 text-cyan-300 hover:text-white'
+                ? 'btn-clay-primary text-white' 
+                : 'clay-panel border-[#E8E2D9] text-[#1A1A1A] hover:text-[#2D5A4A]'
             }`}
             title="Speech Synthesizer Settings"
           >
@@ -491,24 +491,24 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
 
           <button
             onClick={onExit}
-            className="text-xs text-rose-400 hover:text-rose-200 font-mono font-bold transition-colors px-3 py-1.5 rounded-xl hover:bg-rose-500/10 border border-rose-500/20 cursor-pointer"
+            className="text-xs text-rose-600 hover:text-rose-700 font-mono font-bold transition-colors px-3 py-1.5 rounded-xl hover:bg-rose-50 border border-rose-200 cursor-pointer"
           >
-            Exit Arena
+            Exit Studio
           </button>
         </div>
       </div>
 
       {/* Expandable Voice & Speech Customization Console */}
       {showVoiceSettings && (
-        <div className="clay-panel-glow p-5 border border-cyan-500/30 animate-in fade-in duration-200 space-y-4">
-          <div className="flex items-center justify-between border-b border-cyan-500/15 pb-3">
+        <div className="clay-panel-glow p-5 border border-[#E8E2D9] animate-in fade-in duration-200 space-y-4">
+          <div className="flex items-center justify-between border-b border-[#E8E2D9] pb-3">
             <div className="flex items-center gap-2">
-              <Volume2 className="w-4 h-4 text-cyan-400" />
-              <h4 className="text-xs font-mono font-black text-cyan-200 uppercase tracking-wider">
-                Neural Speech Synthesizer Calibration
+              <Volume2 className="w-4 h-4 text-[#2D5A4A]" />
+              <h4 className="text-xs font-mono font-black text-[#1A1A1A] uppercase tracking-wider">
+                Speech Synthesizer Calibration
               </h4>
             </div>
-            <span className="text-[11px] font-mono text-pink-400">
+            <span className="text-[11px] font-mono text-[#2D5A4A]">
               {availableVoices.length} Voices Detected
             </span>
           </div>
@@ -516,11 +516,11 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono">
             {/* Voice Model Selector */}
             <div className="space-y-1.5 lg:col-span-2">
-              <label className="text-slate-300 text-[11px] font-semibold block">Select Voice Persona</label>
+              <label className="text-[#1A1A1A] text-[11px] font-semibold block">Select Voice Persona</label>
               <select
                 value={selectedVoiceURI}
                 onChange={(e) => setSelectedVoiceURI(e.target.value)}
-                className="w-full bg-[#0a0e22] border border-cyan-500/30 rounded-xl px-3 py-2 text-cyan-200 focus:outline-none focus:border-cyan-400 text-xs"
+                className="w-full bg-[#FAF8F5] border border-[#E8E2D9] rounded-xl px-3 py-2 text-[#1A1A1A] focus:outline-none focus:border-[#2D5A4A] text-xs"
               >
                 {availableVoices.map((v) => (
                   <option key={v.voiceURI} value={v.voiceURI}>
@@ -533,8 +533,8 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
             {/* Speaking Rate Slider */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-[11px]">
-                <span className="text-slate-300">Pace / Speed</span>
-                <span className="text-cyan-300 font-bold">{speechRate.toFixed(2)}x</span>
+                <span className="text-[#6B7280]">Pace / Speed</span>
+                <span className="text-[#2D5A4A] font-bold">{speechRate.toFixed(2)}x</span>
               </div>
               <input
                 type="range"
@@ -543,15 +543,15 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                 step="0.05"
                 value={speechRate}
                 onChange={(e) => setSpeechRate(parseFloat(e.target.value))}
-                className="w-full accent-cyan-400 cursor-pointer"
+                className="w-full accent-[#2D5A4A] cursor-pointer"
               />
             </div>
 
             {/* Speaking Pitch Slider */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-[11px]">
-                <span className="text-slate-300">Pitch Tone</span>
-                <span className="text-pink-300 font-bold">{speechPitch.toFixed(2)}</span>
+                <span className="text-[#6B7280]">Pitch Tone</span>
+                <span className="text-[#2D5A4A] font-bold">{speechPitch.toFixed(2)}</span>
               </div>
               <input
                 type="range"
@@ -560,7 +560,7 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                 step="0.05"
                 value={speechPitch}
                 onChange={(e) => setSpeechPitch(parseFloat(e.target.value))}
-                className="w-full accent-pink-400 cursor-pointer"
+                className="w-full accent-[#2D5A4A] cursor-pointer"
               />
             </div>
           </div>
@@ -568,7 +568,7 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
           <div className="flex items-center justify-between pt-2">
             <button
               onClick={() => speakText("This is a live preview test of your calibrated neural speech synthesizer.")}
-              className="px-4 py-1.5 rounded-xl btn-clay-cyan text-[#030a1c] font-black text-xs flex items-center gap-1.5 cursor-pointer font-mono"
+              className="px-4 py-1.5 rounded-xl btn-clay-primary text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer font-mono"
             >
               <Play className="w-3 h-3" /> Test Voice Sample
             </button>
@@ -579,7 +579,7 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                 setSpeechPitch(1.0);
                 setSpeechVolume(1.0);
               }}
-              className="text-[11px] text-slate-400 hover:text-cyan-300 font-mono flex items-center gap-1 cursor-pointer"
+              className="text-[11px] text-[#6B7280] hover:text-[#1A1A1A] font-mono flex items-center gap-1 cursor-pointer"
             >
               <RotateCcw className="w-3 h-3" /> Reset Defaults
             </button>
@@ -587,43 +587,42 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
         </div>
       )}
 
-      {/* Main Studio Arena in Cyber Bento Composition */}
+      {/* Main Studio Arena */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-7">
-        {/* Left Bento Column: AI Agent & Live Question & Candidate Studio */}
+        {/* Left Column: AI Agent & Live Question & Candidate Studio */}
         <div className="lg:col-span-7 space-y-6">
           {/* Subcard 1: AI Agent & Question Display */}
-          <div className="clay-panel-glow p-6 sm:p-7 border border-cyan-500/25 relative overflow-hidden">
-            {/* Background Cyber Glow */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="clay-panel-glow p-6 sm:p-7 border border-[#E8E2D9] relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#D6C4A8]/15 rounded-full blur-3xl pointer-events-none" />
 
             {/* AI Agent Avatar Status Bar */}
             <div className="flex items-center justify-between mb-6 relative z-10">
               <div className="flex items-center gap-4">
                 <div className="relative">
-                  <div className="w-13 h-13 rounded-2xl btn-clay-cyan flex items-center justify-center border border-white/50 shadow-xl ai-orb-pulse">
-                    <Sparkles className="w-6 h-6 text-[#030a1c]" />
+                  <div className="w-13 h-13 rounded-2xl btn-clay-primary flex items-center justify-center border border-white/50 shadow-md ai-orb-pulse">
+                    <Sparkles className="w-6 h-6 text-white" />
                   </div>
                   {isSpeakingQuestion && (
                     <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-cyan-400 shadow-[0_0_8px_#00f0ff]"></span>
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2D5A4A] opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#2D5A4A]"></span>
                     </span>
                   )}
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-extrabold text-white flex items-center gap-2 tracking-tight">
-                    Neural Interviewer AI
+                  <h3 className="text-sm font-extrabold text-[#1A1A1A] flex items-center gap-2 tracking-tight">
+                    Interviewer AI
                     <span className="text-[10px] clay-badge-cyan px-2.5 py-0.5 rounded-full font-mono font-semibold">
                       {currentQ.category}
                     </span>
                   </h3>
-                  <p className="text-xs text-cyan-200/70 font-mono mt-0.5">
+                  <p className="text-xs text-[#6B7280] font-mono mt-0.5">
                     {isSpeakingQuestion 
-                      ? 'Speaking question aloud via neural speech...' 
+                      ? 'Speaking question aloud...' 
                       : isPausedTTS 
                         ? 'Speech synthesis paused.' 
-                        : 'Awaiting candidate solution synthesis...'}
+                        : 'Awaiting candidate response...'}
                   </p>
                 </div>
               </div>
@@ -635,14 +634,14 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                     <button
                       onClick={togglePauseTTS}
                       title="Pause Voice Question"
-                      className="p-3 rounded-2xl btn-clay-dark cursor-pointer text-amber-300 hover:text-white"
+                      className="p-3 rounded-2xl btn-clay-dark cursor-pointer text-[#1A1A1A] hover:text-[#2D5A4A]"
                     >
                       <span className="text-xs font-mono font-bold">||</span>
                     </button>
                     <button
                       onClick={stopSpeaking}
                       title="Stop Speaking"
-                      className="p-3 rounded-2xl btn-clay-dark cursor-pointer text-rose-400 hover:text-white"
+                      className="p-3 rounded-2xl btn-clay-dark cursor-pointer text-rose-600 hover:text-rose-700"
                     >
                       <Square className="w-4 h-4 fill-current" />
                     </button>
@@ -651,7 +650,7 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                   <button
                     onClick={() => speakText(currentQ.question)}
                     title="Speak Question Aloud"
-                    className="p-3 rounded-2xl btn-clay-cyan cursor-pointer text-[#030a1c] shadow-md group"
+                    className="p-3 rounded-2xl btn-clay-primary cursor-pointer text-white shadow-sm group"
                   >
                     <Volume2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
                   </button>
@@ -659,12 +658,12 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
               </div>
             </div>
 
-            {/* Question Display with Cyber Clay Surface */}
-            <div className="my-5 p-6 rounded-2xl clay-card border border-cyan-500/25 relative z-10">
-              <span className="text-[10px] text-pink-400 font-bold uppercase tracking-widest block mb-2 font-mono">
+            {/* Question Display */}
+            <div className="my-5 p-6 rounded-2xl clay-card border border-[#E8E2D9] relative z-10">
+              <span className="text-[10px] text-[#2D5A4A] font-bold uppercase tracking-widest block mb-2 font-mono">
                 QUESTION #{currentIndex + 1}
               </span>
-              <h2 className="text-lg sm:text-xl font-extrabold text-white leading-relaxed tracking-tight">
+              <h2 className="text-lg sm:text-xl font-extrabold text-[#1A1A1A] leading-relaxed tracking-tight">
                 &ldquo;{currentQ.question}&rdquo;
               </h2>
             </div>
@@ -675,14 +674,14 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                 {!showHint ? (
                   <button
                     onClick={() => setShowHint(true)}
-                    className="inline-flex items-center gap-2 text-xs text-amber-300/80 hover:text-amber-200 font-mono font-semibold transition-colors group cursor-pointer"
+                    className="inline-flex items-center gap-2 text-xs text-[#2D5A4A] hover:underline font-mono font-semibold transition-colors group cursor-pointer"
                   >
-                    <Lightbulb className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+                    <Lightbulb className="w-4 h-4 text-[#2D5A4A] group-hover:scale-110 transition-transform" />
                     <span>Need technical direction or hint?</span>
                   </button>
                 ) : (
-                  <div className="p-4 rounded-xl clay-panel border border-amber-500/30 text-amber-200 text-xs flex items-start gap-2.5 animate-in fade-in duration-300 font-light">
-                    <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <div className="p-4 rounded-xl clay-panel border border-[#D6C4A8] text-[#1A1A1A] text-xs flex items-start gap-2.5 animate-in fade-in duration-300 font-normal">
+                    <Lightbulb className="w-4 h-4 text-[#2D5A4A] shrink-0 mt-0.5" />
                     <span className="leading-relaxed">{currentQ.hint}</span>
                   </div>
                 )}
@@ -691,25 +690,25 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
           </div>
 
           {/* Subcard 2: User Response Console */}
-          <div className="clay-panel-glow p-6 sm:p-7 border border-purple-500/25 relative overflow-hidden">
+          <div className="clay-panel-glow p-6 sm:p-7 border border-[#E8E2D9] relative overflow-hidden">
             <div className="flex items-center justify-between mb-4">
-              <label className="text-xs font-mono font-bold text-purple-200 uppercase tracking-widest flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-purple-400" />
+              <label className="text-xs font-mono font-bold text-[#1A1A1A] uppercase tracking-widest flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-[#2D5A4A]" />
                 Candidate Response Studio
               </label>
 
-              {/* Enhanced Voice Dictation Toggle with Active Status Glow */}
+              {/* Voice Dictation Toggle */}
               <button
                 onClick={toggleRecording}
-                className={`px-4.5 py-2.5 rounded-xl text-xs font-black font-mono flex items-center gap-2 cursor-pointer transition-all ${
+                className={`px-4.5 py-2.5 rounded-xl text-xs font-bold font-mono flex items-center gap-2 cursor-pointer transition-all ${
                   isRecording
-                    ? 'btn-clay-pink animate-pulse text-white shadow-[0_0_25px_rgba(255,0,127,0.8)]'
-                    : 'btn-clay-cyan text-[#030a1c]'
+                    ? 'btn-clay-pink text-[#1A1A1A] shadow-md ring-2 ring-[#2D5A4A]'
+                    : 'btn-clay-primary text-white'
                 }`}
               >
                 {isRecording ? (
                   <>
-                    <MicOff className="w-3.5 h-3.5" /> Stop Live Dictation
+                    <MicOff className="w-3.5 h-3.5" /> Stop Voice Dictation
                   </>
                 ) : (
                   <>
@@ -722,10 +721,10 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
             {/* Audio Wave Visualizer & Real-time Live Interim Preview while speaking */}
             {isRecording && (
               <div className="mb-4 space-y-2">
-                <div className="p-3 rounded-2xl clay-panel border border-pink-500/30 flex items-center justify-between px-5 h-16 shadow-[0_0_20px_rgba(255,0,127,0.2)]">
+                <div className="p-3 rounded-2xl clay-panel border border-[#D6C4A8] flex items-center justify-between px-5 h-16 shadow-sm">
                   <div className="flex items-center gap-3">
-                    <span className="w-3 h-3 rounded-full bg-pink-500 animate-ping" />
-                    <span className="text-xs text-pink-200 font-mono font-bold">Microphone Active • Continuous Dictation</span>
+                    <span className="w-3 h-3 rounded-full bg-[#2D5A4A] animate-ping" />
+                    <span className="text-xs text-[#1A1A1A] font-mono font-bold">Microphone Active • Continuous Dictation</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="w-2 rounded-full audio-bar-1" />
@@ -738,8 +737,8 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                 </div>
 
                 {interimTranscript && (
-                  <div className="p-2.5 px-4 rounded-xl bg-pink-950/40 border border-pink-500/30 text-xs font-mono text-pink-200 flex items-center gap-2 animate-pulse">
-                    <span className="text-[10px] uppercase font-bold text-pink-400">Live Capturing:</span>
+                  <div className="p-2.5 px-4 rounded-xl bg-[#FAF8F5] border border-[#E8E2D9] text-xs font-mono text-[#1A1A1A] flex items-center gap-2 animate-pulse">
+                    <span className="text-[10px] uppercase font-bold text-[#2D5A4A]">Live Capturing:</span>
                     <span className="italic truncate">{interimTranscript}</span>
                   </div>
                 )}
@@ -755,13 +754,13 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
               disabled={isEvaluating || evaluation !== null}
               rows={7}
               placeholder="Formulate your response here. Speak naturally via mic dictation or type structured responses adopting the STAR framework (Situation, Task, Action, Result)..."
-              className="w-full bg-[#0a0e22]/90 backdrop-blur-md border border-cyan-500/30 rounded-2xl p-4 text-sm text-cyan-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/25 transition-all resize-none font-sans font-light leading-relaxed shadow-[inset_0_2px_6px_rgba(0,0,0,0.8)]"
+              className="w-full bg-[#FAF8F5] border border-[#E8E2D9] rounded-2xl p-4 text-sm text-[#1A1A1A] placeholder-[#6B7280] focus:outline-none focus:border-[#2D5A4A] focus:ring-1 focus:ring-[#2D5A4A] transition-all resize-none font-sans font-normal leading-relaxed"
             />
 
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <span className="text-xs text-cyan-300/80 font-mono">
-                  Words: <strong className="text-white font-bold">{userAnswer.trim() ? userAnswer.trim().split(/\s+/).length : 0}</strong>
+                <span className="text-xs text-[#6B7280] font-mono">
+                  Words: <strong className="text-[#1A1A1A] font-bold">{userAnswer.trim() ? userAnswer.trim().split(/\s+/).length : 0}</strong>
                 </span>
 
                 {userAnswer && !evaluation && (
@@ -770,7 +769,7 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                       setUserAnswer('');
                       finalTranscriptAccumulatorRef.current = '';
                     }}
-                    className="text-[11px] text-slate-400 hover:text-rose-400 font-mono transition cursor-pointer"
+                    className="text-[11px] text-[#6B7280] hover:text-rose-600 font-mono transition cursor-pointer"
                   >
                     Clear Text
                   </button>
@@ -781,22 +780,22 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                 <button
                   onClick={handleEvaluate}
                   disabled={!userAnswer.trim() || isEvaluating}
-                  className="px-8 py-3.5 rounded-xl btn-clay-cyan disabled:opacity-40 disabled:cursor-not-allowed font-black text-xs font-mono uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-[0_8px_20px_rgba(0,240,255,0.4)]"
+                  className="px-8 py-3.5 rounded-xl btn-clay-primary disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs font-mono uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-sm text-white"
                 >
                   {isEvaluating ? (
                     <>
-                      <RefreshCw className="w-4 h-4 animate-spin text-[#030a1c]" /> Evaluating Response...
+                      <RefreshCw className="w-4 h-4 animate-spin text-white" /> Evaluating Response...
                     </>
                   ) : (
                     <>
-                      <Send className="w-4 h-4 text-[#030a1c]" /> Evaluate Response
+                      <Send className="w-4 h-4 text-white" /> Evaluate Response
                     </>
                   )}
                 </button>
               ) : (
                 <button
                   onClick={handleNext}
-                  className="px-8 py-3.5 rounded-xl btn-clay-pink font-black text-xs font-mono uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-[0_8px_20px_rgba(255,0,127,0.4)]"
+                  className="px-8 py-3.5 rounded-xl btn-clay-pink font-bold text-xs font-mono uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-sm text-[#1A1A1A]"
                 >
                   {currentIndex + 1 < questions.length ? (
                     <>
@@ -813,13 +812,13 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
           </div>
         </div>
 
-        {/* Right Bento Column: AI Score & Rubric Analysis */}
+        {/* Right Column: AI Score & Rubric Analysis */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="clay-panel-glow p-6 sm:p-7 border border-cyan-500/25 sticky top-24">
+          <div className="clay-panel-glow p-6 sm:p-7 border border-[#E8E2D9] sticky top-24">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-sm font-black text-white flex items-center gap-2 tracking-tight font-mono">
-                <Sparkles className="w-4 h-4 text-cyan-400" />
-                Real-Time AI Cyber Scorecard
+              <h3 className="text-sm font-black text-[#1A1A1A] flex items-center gap-2 tracking-tight font-mono">
+                <Sparkles className="w-4 h-4 text-[#2D5A4A]" />
+                Real-Time AI Scorecard
               </h3>
 
               {evaluation && (
@@ -827,8 +826,8 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                   onClick={readEvaluationAloud}
                   className={`p-2 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition cursor-pointer ${
                     isReadingEvaluation 
-                      ? 'btn-clay-pink text-white animate-pulse' 
-                      : 'clay-panel border-cyan-500/30 text-cyan-300 hover:text-white'
+                      ? 'btn-clay-pink text-[#1A1A1A]' 
+                      : 'clay-panel border-[#E8E2D9] text-[#1A1A1A] hover:text-[#2D5A4A]'
                   }`}
                   title="Speak AI Evaluation Breakdown"
                 >
@@ -839,49 +838,49 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
             </div>
 
             {!evaluation ? (
-              <div className="text-center py-16 px-4 border border-dashed border-cyan-500/30 rounded-2xl clay-panel">
-                <div className="w-14 h-14 rounded-2xl btn-clay-purple mx-auto flex items-center justify-center text-white mb-4 shadow-[0_0_20px_rgba(157,78,221,0.4)]">
+              <div className="text-center py-16 px-4 border border-dashed border-[#E8E2D9] rounded-2xl clay-panel">
+                <div className="w-14 h-14 rounded-2xl btn-clay-primary mx-auto flex items-center justify-center text-white mb-4 shadow-sm">
                   <Cpu className="w-7 h-7" />
                 </div>
-                <h4 className="text-sm font-bold text-cyan-200 mb-1 tracking-tight">Awaiting Candidate Submission</h4>
-                <p className="text-xs text-slate-400 font-light max-w-xs mx-auto leading-relaxed">
+                <h4 className="text-sm font-bold text-[#1A1A1A] mb-1 tracking-tight">Awaiting Candidate Submission</h4>
+                <p className="text-xs text-[#6B7280] font-normal max-w-xs mx-auto leading-relaxed">
                   Submit your response to receive immediate multi-attribute rubric grades on accuracy, clarity, and STAR structure.
                 </p>
               </div>
             ) : (
               <div className="space-y-6 animate-in fade-in duration-300">
-                {/* Score Hero Card with Cyber Clay Treatment */}
-                <div className="flex items-center justify-between p-5 rounded-2xl clay-card border border-cyan-500/30">
+                {/* Score Hero Card */}
+                <div className="flex items-center justify-between p-5 rounded-2xl clay-card border border-[#E8E2D9]">
                   <div>
-                    <span className="text-[10px] text-cyan-300/80 font-mono font-bold uppercase tracking-widest block">
+                    <span className="text-[10px] text-[#6B7280] font-mono font-bold uppercase tracking-widest block">
                       OVERALL SCORE
                     </span>
-                    <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-fuchsia-400 drop-shadow-[0_0_12px_rgba(0,240,255,0.5)]">
-                      {evaluation.score}<span className="text-lg text-slate-400 font-light">/100</span>
+                    <span className="text-4xl font-black text-[#2D5A4A]">
+                      {evaluation.score}<span className="text-lg text-[#6B7280] font-normal">/100</span>
                     </span>
                   </div>
 
-                  <div className={`px-4 py-1.5 rounded-full text-xs font-black font-mono tracking-wide ${
+                  <div className={`px-4 py-1.5 rounded-full text-xs font-bold font-mono tracking-wide ${
                     evaluation.score >= 80 
-                      ? 'btn-clay-cyan text-[#030a1c]'
+                      ? 'btn-clay-primary text-white'
                       : evaluation.score >= 60 
                       ? 'btn-clay-purple text-white'
-                      : 'btn-clay-pink text-white'
+                      : 'btn-clay-pink text-[#1A1A1A]'
                   }`}>
                     {evaluation.score >= 80 ? 'EXEMPLARY' : evaluation.score >= 60 ? 'COMPETENT' : 'NEEDS REVISION'}
                   </div>
                 </div>
 
-                {/* Submetrics Breakdown with Colourful Neon Gradients */}
+                {/* Submetrics Breakdown */}
                 <div className="space-y-3.5">
                   <div>
                     <div className="flex justify-between text-xs mb-1.5 font-mono font-semibold">
-                      <span className="text-cyan-300">Technical Accuracy</span>
-                      <span className="text-white font-bold">{evaluation.technicalAccuracyScore}%</span>
+                      <span className="text-[#1A1A1A]">Technical Accuracy</span>
+                      <span className="text-[#2D5A4A] font-bold">{evaluation.technicalAccuracyScore}%</span>
                     </div>
-                    <div className="h-2.5 w-full bg-[#0a0e22] rounded-full overflow-hidden border border-cyan-500/30">
+                    <div className="h-2.5 w-full bg-[#FAF8F5] rounded-full overflow-hidden border border-[#E8E2D9]">
                       <div 
-                        className="h-full bg-gradient-to-r from-cyan-500 to-teal-400 rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(0,240,255,0.7)]"
+                        className="h-full bg-gradient-to-r from-[#2D5A4A] to-[#3d7863] rounded-full transition-all duration-700"
                         style={{ width: `${evaluation.technicalAccuracyScore}%` }}
                       />
                     </div>
@@ -889,12 +888,12 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
 
                   <div>
                     <div className="flex justify-between text-xs mb-1.5 font-mono font-semibold">
-                      <span className="text-pink-300">Communication &amp; Clarity</span>
-                      <span className="text-white font-bold">{evaluation.communicationScore}%</span>
+                      <span className="text-[#1A1A1A]">Communication &amp; Clarity</span>
+                      <span className="text-[#2D5A4A] font-bold">{evaluation.communicationScore}%</span>
                     </div>
-                    <div className="h-2.5 w-full bg-[#0a0e22] rounded-full overflow-hidden border border-pink-500/30">
+                    <div className="h-2.5 w-full bg-[#FAF8F5] rounded-full overflow-hidden border border-[#E8E2D9]">
                       <div 
-                        className="h-full bg-gradient-to-r from-pink-500 to-rose-400 rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(255,0,127,0.7)]"
+                        className="h-full bg-gradient-to-r from-[#D6C4A8] to-[#b89f78] rounded-full transition-all duration-700"
                         style={{ width: `${evaluation.communicationScore}%` }}
                       />
                     </div>
@@ -902,12 +901,12 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
 
                   <div>
                     <div className="flex justify-between text-xs mb-1.5 font-mono font-semibold">
-                      <span className="text-purple-300">STAR Structure &amp; Logic</span>
-                      <span className="text-white font-bold">{evaluation.structureScore}%</span>
+                      <span className="text-[#1A1A1A]">STAR Structure &amp; Logic</span>
+                      <span className="text-[#2D5A4A] font-bold">{evaluation.structureScore}%</span>
                     </div>
-                    <div className="h-2.5 w-full bg-[#0a0e22] rounded-full overflow-hidden border border-purple-500/30">
+                    <div className="h-2.5 w-full bg-[#FAF8F5] rounded-full overflow-hidden border border-[#E8E2D9]">
                       <div 
-                        className="h-full bg-gradient-to-r from-purple-500 to-indigo-400 rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(157,78,221,0.7)]"
+                        className="h-full bg-gradient-to-r from-[#3d7863] to-[#2D5A4A] rounded-full transition-all duration-700"
                         style={{ width: `${evaluation.structureScore}%` }}
                       />
                     </div>
@@ -917,11 +916,11 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                 {/* Strengths */}
                 {evaluation.strengths.length > 0 && (
                   <div className="space-y-2">
-                    <h5 className="text-xs font-mono font-bold text-emerald-300 flex items-center gap-1.5 uppercase tracking-wider">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Strengths Identified
+                    <h5 className="text-xs font-mono font-bold text-[#2D5A4A] flex items-center gap-1.5 uppercase tracking-wider">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#2D5A4A]" /> Strengths Identified
                     </h5>
                     {evaluation.strengths.map((s, i) => (
-                      <p key={i} className="text-xs text-slate-300 pl-3.5 border-l-2 border-emerald-400 leading-relaxed font-light">
+                      <p key={i} className="text-xs text-[#1A1A1A] pl-3.5 border-l-2 border-[#2D5A4A] leading-relaxed font-normal">
                         {s}
                       </p>
                     ))}
@@ -931,11 +930,11 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                 {/* Improvements */}
                 {evaluation.improvements.length > 0 && (
                   <div className="space-y-2">
-                    <h5 className="text-xs font-mono font-bold text-pink-300 flex items-center gap-1.5 uppercase tracking-wider">
-                      <AlertCircle className="w-3.5 h-3.5 text-pink-400" /> High-Impact Improvements
+                    <h5 className="text-xs font-mono font-bold text-[#b89f78] flex items-center gap-1.5 uppercase tracking-wider">
+                      <AlertCircle className="w-3.5 h-3.5 text-[#b89f78]" /> High-Impact Improvements
                     </h5>
                     {evaluation.improvements.map((imp, i) => (
-                      <p key={i} className="text-xs text-slate-300 pl-3.5 border-l-2 border-pink-400 leading-relaxed font-light">
+                      <p key={i} className="text-xs text-[#6B7280] pl-3.5 border-l-2 border-[#D6C4A8] leading-relaxed font-normal">
                         {imp}
                       </p>
                     ))}
@@ -943,11 +942,11 @@ export const InterviewStudio: React.FC<InterviewStudioProps> = ({
                 )}
 
                 {/* Model Answer Outline */}
-                <div className="pt-3 border-t border-cyan-500/20">
-                  <h5 className="text-xs font-mono font-bold text-cyan-300 mb-2 flex items-center gap-1.5 uppercase tracking-widest">
-                    <BookOpen className="w-3.5 h-3.5 text-cyan-400" /> Model Answer Blueprint
+                <div className="pt-3 border-t border-[#E8E2D9]">
+                  <h5 className="text-xs font-mono font-bold text-[#2D5A4A] mb-2 flex items-center gap-1.5 uppercase tracking-widest">
+                    <BookOpen className="w-3.5 h-3.5 text-[#2D5A4A]" /> Model Answer Blueprint
                   </h5>
-                  <p className="text-xs text-slate-200 clay-panel p-4 rounded-xl border border-cyan-500/20 leading-relaxed font-sans font-light">
+                  <p className="text-xs text-[#1A1A1A] clay-panel p-4 rounded-xl border border-[#E8E2D9] leading-relaxed font-sans font-normal">
                     {evaluation.suggestedAnswer}
                   </p>
                 </div>

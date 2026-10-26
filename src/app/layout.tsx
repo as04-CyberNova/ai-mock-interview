@@ -27,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} dark`}>
-      <body className="font-sans antialiased min-h-screen bg-[#050811] text-slate-100 overflow-x-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className="font-sans antialiased min-h-screen bg-[#FAF8F5] text-[#1A1A1A] overflow-x-hidden selection:bg-[#D6C4A8]/40 selection:text-[#1A1A1A]">
         <AuthProvider>
           {children}
         </AuthProvider>

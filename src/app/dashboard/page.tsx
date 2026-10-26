@@ -21,7 +21,7 @@ export default function DashboardRoutePage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-[#070913] text-slate-100 flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
+      <div className="min-h-screen bg-[#FAF8F5] text-[#1A1A1A] flex flex-col selection:bg-[#D6C4A8]/40 selection:text-[#1A1A1A]">
         <Navbar
           currentTab={currentTab}
           setCurrentTab={(tab) => {
@@ -41,16 +41,16 @@ export default function DashboardRoutePage() {
           />
         </main>
 
-        <footer className="border-t border-cyan-500/15 bg-[#050711] py-8 text-center text-xs text-slate-400 font-mono">
+        <footer className="border-t border-[#E8E2D9] bg-[#FFFFFF] py-8 text-center text-xs text-[#6B7280] font-mono">
           <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>© 2026 PrepAI Cyber Studio. Performance &amp; Skill Metrics Engine.</p>
+            <p>© 2026 PrepAI Studio. Performance &amp; Skill Metrics Engine.</p>
             <div className="flex items-center gap-6">
-              <Link href="/login" className="text-cyan-400 hover:text-cyan-200 transition">
+              <Link href="/login" className="text-[#2D5A4A] hover:text-[#23483b] font-medium transition">
                 Candidate Account
               </Link>
-              <span className="text-pink-400 font-bold flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#00f0ff]" />
-                Neural Grid Online
+              <span className="text-[#2D5A4A] font-bold flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#2D5A4A] animate-pulse" />
+                Active Session Ready
               </span>
             </div>
           </div>
